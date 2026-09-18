@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Doxan (dev)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "app",
+      "program": "lib/main_dev.dart",
+      "args": ["--flavor", "dev"]
+    },
+    {
+      "name": "Doxan (dev + Supabase)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "app",
+      "program": "lib/main_dev.dart",
+      "args": [
+        "--flavor",
+        "dev",
+        "--dart-define-from-file",
+        "env.json"
+      ]
+    },
+    {
+      "name": "Doxan (prod)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "app",
+      "program": "lib/main_prod.dart",
+      "args": ["--flavor", "prod"]
+    }
+  ]
+}

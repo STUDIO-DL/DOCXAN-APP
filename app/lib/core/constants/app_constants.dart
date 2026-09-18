@@ -1,0 +1,17 @@
+abstract final class AppConstants {
+  static const appName = 'Doxan';
+  static const applicationId = 'app.doxan';
+  static const splashDuration = Duration(milliseconds: 1400);
+  static const pinLength = 6;
+  static const trashRetentionDays = 30;
+  static const targetPageBytesMin = 150 * 1024;
+  static const targetPageBytesMax = 500 * 1024;
+  static const privacyUrl = 'https://doxan.app/privacy';
+  static const termsUrl = 'https://doxan.app/terms';
+}
+
+abstract final class StorageKeys {
+  static const onboardingComplete = 'onboarding_complete';
+  static const pinHash = 'pin_hash';
+  static const backupEnabled = 'backup_enabled';
+}

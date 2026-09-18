@@ -1,0 +1,1 @@
+-- No seed de documentos reales. El modo invitado usa DemoCatalog en el cliente.
