@@ -12,3 +12,13 @@ String greetingFor(DateTime now) {
   if (hour < 19) return 'afternoon';
   return 'evening';
 }
+
+String formatRelativeTime(DateTime date, [DateTime? now]) {
+  final current = now ?? DateTime.now();
+  final diff = current.difference(date);
+  if (diff.inMinutes < 1) return 'Ahora';
+  if (diff.inMinutes < 60) return 'Hace ${diff.inMinutes} min';
+  if (diff.inHours < 24) return 'Hace ${diff.inHours} h';
+  if (diff.inHours < 48) return 'Ayer';
+  return 'Hace ${diff.inDays} d';
+}

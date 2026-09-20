@@ -1,19 +1,20 @@
-import 'package:doxan/app/l10n/app_localizations.dart';
-import 'package:doxan/app/theme/colors.dart';
-import 'package:doxan/core/demo/demo_catalog.dart';
-import 'package:doxan/core/extensions/date_time_x.dart';
-import 'package:doxan/core/utils/formatters.dart';
+import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/extensions/date_time_x.dart';
+import 'package:docxan/core/library/library_controller.dart';
+import 'package:docxan/core/utils/formatters.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DocumentPage extends StatelessWidget {
+class DocumentPage extends ConsumerWidget {
   const DocumentPage({super.key, required this.documentId});
 
   final String documentId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final doc = DemoCatalog.documentById(documentId);
+    final doc = ref.watch(libraryProvider).documentById(documentId);
     if (doc == null) {
       return Scaffold(
         appBar: AppBar(),
@@ -30,9 +31,9 @@ class DocumentPage extends StatelessWidget {
             aspectRatio: 3 / 4,
             child: Container(
               decoration: BoxDecoration(
-                color: DoxanColors.paper,
+                color: DocxanColors.paper,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: DoxanColors.hairline),
+                border: Border.all(color: DocxanColors.hairline),
               ),
               child: const Center(
                 child: Icon(Icons.description_outlined, size: 64),

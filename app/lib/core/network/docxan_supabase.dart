@@ -1,9 +1,9 @@
-import 'package:doxan/app/flavor.dart';
-import 'package:doxan/core/logging/app_logger.dart';
-import 'package:doxan/core/network/supabase_config.dart';
+import 'package:docxan/app/flavor.dart';
+import 'package:docxan/core/logging/app_logger.dart';
+import 'package:docxan/core/network/supabase_config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-abstract final class DoxanSupabase {
+abstract final class DocxanSupabase {
   static bool isReady = false;
 
   static Future<void> initialize(FlavorConfig flavor) async {

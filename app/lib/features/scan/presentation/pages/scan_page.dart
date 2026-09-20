@@ -1,5 +1,5 @@
-import 'package:doxan/app/l10n/app_localizations.dart';
-import 'package:doxan/app/theme/colors.dart';
+import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:docxan/app/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class ScanPage extends StatelessWidget {
@@ -9,7 +9,7 @@ class ScanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: DoxanColors.ink,
+      backgroundColor: DocxanColors.ink,
       body: SafeArea(
         child: Column(
           children: [
@@ -20,7 +20,7 @@ class ScanPage extends StatelessWidget {
                 child: Text(
                   l10n.scan,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: DoxanColors.paper,
+                    color: DocxanColors.paper,
                   ),
                 ),
               ),
@@ -41,7 +41,7 @@ class ScanPage extends StatelessWidget {
                   Text(
                     l10n.scanPlaceholderTitle,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: DoxanColors.paper,
+                      color: DocxanColors.paper,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -58,11 +58,11 @@ class ScanPage extends StatelessWidget {
                     height: 72,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: DoxanColors.paper, width: 4),
+                      border: Border.all(color: DocxanColors.paper, width: 4),
                     ),
                     child: const DecoratedBox(
                       decoration: BoxDecoration(
-                        color: DoxanColors.paper,
+                        color: DocxanColors.paper,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -83,7 +83,7 @@ class _ViewfinderPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = DoxanColors.paper
+      ..color = DocxanColors.paper
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

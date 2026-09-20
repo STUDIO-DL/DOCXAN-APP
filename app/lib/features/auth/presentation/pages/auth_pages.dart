@@ -1,8 +1,8 @@
-import 'package:doxan/app/l10n/app_localizations.dart';
-import 'package:doxan/app/router/routes.dart';
-import 'package:doxan/core/errors/app_failure.dart';
-import 'package:doxan/core/session/session_controller.dart';
-import 'package:doxan/features/auth/presentation/controllers/auth_providers.dart';
+import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:docxan/app/router/routes.dart';
+import 'package:docxan/core/errors/app_failure.dart';
+import 'package:docxan/core/session/session_controller.dart';
+import 'package:docxan/features/auth/presentation/controllers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

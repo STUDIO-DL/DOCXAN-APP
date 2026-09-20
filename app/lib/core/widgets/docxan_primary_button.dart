@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DoxanPrimaryButton extends StatelessWidget {
-  const DoxanPrimaryButton({
+class DocxanPrimaryButton extends StatelessWidget {
+  const DocxanPrimaryButton({
     super.key,
     required this.label,
     required this.onPressed,

@@ -1,10 +1,10 @@
-# Doxan
+# Docxan
 
 App Android offline-first para escanear, organizar y respaldar documentos.
 
 ## Estructura
 
-- `app/` — Flutter (`applicationId`: `app.doxan`, `minSdk`: 26)
+- `app/` — Flutter (`applicationId`: `app.docxan`, `minSdk`: 26)
 - `supabase/` — Auth, Postgres (metadatos) y Edge Function de URLs prefirmadas R2
 - `legal/` — política de privacidad y términos (Play)
 - `tool/` — smoke test de Cloudflare R2
@@ -30,7 +30,7 @@ flutter run --flavor prod -t lib/main_prod.dart
 
 1. Google Play Console
 2. **Supabase** — guía: [docs/supabase.md](docs/supabase.md)
-3. Cloudflare R2 (buckets `doxan-backups-dev` / `doxan-backups-prod`) — hecho
+3. Cloudflare R2 (buckets `docxan-backups-dev` / `docxan-backups-prod`) — hecho
 4. Google Cloud OAuth (SHA-1 debug + Play App Signing)
 
 Copia `app/env.example.json` a `app/env.json` (no se sube al repo).

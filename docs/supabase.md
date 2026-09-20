@@ -1,4 +1,4 @@
-# Alta de Supabase (Doxan)
+# Alta de Supabase (Docxan)
 
 R2 ya está. Ahora Auth + Postgres (solo metadatos, nunca OCR ni blobs).
 
@@ -6,7 +6,7 @@ R2 ya está. Ahora Auth + Postgres (solo metadatos, nunca OCR ni blobs).
 
 1. Entra en [https://supabase.com/dashboard](https://supabase.com/dashboard)
 2. **New project**
-3. Name: `doxan`
+3. Name: `docxan`
 4. Database password: genérala y **guárdala** (no va en la app)
 5. Region: **Central Europe (Frankfurt)** — misma zona que R2 EU
 6. Plan **Free**
@@ -50,17 +50,17 @@ Hace falta un proyecto en [Google Cloud Console](https://console.cloud.google.co
 
 ### Google Cloud
 
-1. Crea (o elige) un proyecto, p. ej. `doxan`.
+1. Crea (o elige) un proyecto, p. ej. `docxan`.
 2. **APIs & Services → OAuth consent screen**
    - User type: External
-   - App name: Doxan
+   - App name: Docxan
    - Support email: el tuyo
    - Scopes: `email`, `profile`, `openid`
 3. **Credentials → Create credentials → OAuth client ID**
 
 **A) Web application** (este es el que va en Supabase y en `env.json`)
 
-- Name: `Doxan Web`
+- Name: `Docxan Web`
 - Authorized redirect URIs:
   - `https://<PROJECT_REF>.supabase.co/auth/v1/callback`
 - Copia **Client ID** y **Client secret**
@@ -69,8 +69,8 @@ Hace falta un proyecto en [Google Cloud Console](https://console.cloud.google.co
 
 | Name | Package name | SHA-1 |
 |------|----------------|-------|
-| Doxan Android Dev | `app.doxan.dev` | SHA-1 del keystore **debug** |
-| Doxan Android | `app.doxan` | SHA-1 de **Play App Signing** (y debug si pruebas prod local) |
+| Docxan Android Dev | `app.docxan.dev` | SHA-1 del keystore **debug** |
+| Docxan Android | `app.docxan` | SHA-1 de **Play App Signing** (y debug si pruebas prod local) |
 
 SHA-1 debug (en tu máquina, no lo pegues en el chat):
 
@@ -97,7 +97,7 @@ En `app/env.json`:
 "GOOGLE_WEB_CLIENT_ID": "xxxxx.apps.googleusercontent.com"
 ```
 
-Es el Client ID **Web**, no el de Android. Relanza **Doxan (dev + Supabase)**.
+Es el Client ID **Web**, no el de Android. Relanza **Docxan (dev + Supabase)**.
 
 ## 3. Tablas
 
@@ -123,7 +123,7 @@ Edita `app/env.json` (está en `.gitignore`) y lanza:
 flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env.json
 ```
 
-O en Cursor: **Doxan (dev + Supabase)**.
+O en Cursor: **Docxan (dev + Supabase)**.
 
 ## 5. Secrets de R2 (más adelante)
 

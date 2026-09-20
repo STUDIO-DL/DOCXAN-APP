@@ -1,4 +1,4 @@
-import 'package:doxan/core/errors/app_failure.dart';
+import 'package:docxan/core/errors/app_failure.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthDatasource {

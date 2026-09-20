@@ -1,8 +1,8 @@
-import 'package:doxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/colors.dart';
 import 'package:flutter/material.dart';
 
-class DoxanEmptyState extends StatelessWidget {
-  const DoxanEmptyState({
+class DocxanEmptyState extends StatelessWidget {
+  const DocxanEmptyState({
     super.key,
     required this.title,
     required this.body,
@@ -20,7 +20,7 @@ class DoxanEmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 40, color: DoxanColors.inkMuted),
+          Icon(icon, size: 40, color: DocxanColors.inkMuted),
           const SizedBox(height: 16),
           Text(title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),

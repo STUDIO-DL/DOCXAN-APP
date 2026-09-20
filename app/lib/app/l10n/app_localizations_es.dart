@@ -9,7 +9,7 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get appName => 'Doxan';
+  String get appName => 'Docxan';
 
   @override
   String get splashTagline => 'Documentos limpios, en tu móvil.';
@@ -61,6 +61,105 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get searchTitle => 'Buscar';
+
+  @override
+  String get homeSubtitle =>
+      'Tus documentos, siempre contigo. Escanea, organiza y accede cuando lo necesites.';
+
+  @override
+  String get viewAll => 'Ver todos';
+
+  @override
+  String get recentDocuments => 'Documentos recientes';
+
+  @override
+  String get recentFolders => 'Carpetas recientes';
+
+  @override
+  String storageUsed(String used, String total) {
+    return '$used de $total';
+  }
+
+  @override
+  String get addNewFolder => 'Añadir nueva carpeta';
+
+  @override
+  String get folderName => 'Nombre de la carpeta';
+
+  @override
+  String get folderNameHint => 'Ej. Personal';
+
+  @override
+  String get createFolder => 'Crear';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get folderNameEmpty => 'Escribe un nombre.';
+
+  @override
+  String get folderExists => 'Ya existe una carpeta con ese nombre.';
+
+  @override
+  String get fileType => 'Tipo de archivo';
+
+  @override
+  String get tags => 'Etiquetas';
+
+  @override
+  String get date => 'Fecha';
+
+  @override
+  String get urgent => 'Urgente';
+
+  @override
+  String get pending => 'Pendiente';
+
+  @override
+  String get today => 'Hoy';
+
+  @override
+  String get thisWeek => 'Esta semana';
+
+  @override
+  String get lastMonth => 'Mes pasado';
+
+  @override
+  String get accountAndProfile => 'Cuenta y perfil';
+
+  @override
+  String get storagePlan => 'Plan de almacenamiento';
+
+  @override
+  String get personalData => 'Datos personales';
+
+  @override
+  String get documentsSection => 'Documentos';
+
+  @override
+  String get ocrLanguage => 'OCR idiomas';
+
+  @override
+  String get defaultFormat => 'Formatos predeterminados';
+
+  @override
+  String get application => 'Aplicación';
+
+  @override
+  String get securityAndPrivacy => 'Seguridad y privacidad';
+
+  @override
+  String get notifications => 'Notificaciones';
+
+  @override
+  String get themeAndAppearance => 'Tema (oscuro/claro)';
+
+  @override
+  String get totalStorage => 'Almacenamiento total';
+
+  @override
+  String get viewDetails => 'Ver detalles';
 
   @override
   String get recents => 'Recientes';
@@ -207,7 +306,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sendReset => 'Enviar enlace';
 
   @override
-  String get lockTitle => 'Desbloquear Doxan';
+  String get lockTitle => 'Desbloquear Docxan';
 
   @override
   String get lockSubtitle => 'Introduce tu PIN de 6 dígitos';
@@ -226,10 +325,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get emptyFoldersBody =>
-      'Crea Personal, Universidad o Trabajo para ordenar lo que escanees.';
+      'Crea una carpeta para ordenar lo que escanees.';
+
+  @override
+  String get emptyDocuments => 'Aún no hay documentos';
+
+  @override
+  String get emptyDocumentsBody => 'Escanea un papel para crear el primero.';
 
   @override
   String get emptySearch => 'Sin resultados';
+
+  @override
+  String get emptySearchBody => 'Cuando tengas documentos, aparecerán aquí.';
 
   @override
   String get comingSoon => 'Próximamente';

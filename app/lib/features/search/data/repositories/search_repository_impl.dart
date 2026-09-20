@@ -1,4 +1,4 @@
-import 'package:doxan/features/search/domain/repositories/search_repository.dart';
+import 'package:docxan/features/search/domain/repositories/search_repository.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
   @override

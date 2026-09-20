@@ -1,13 +1,13 @@
-import 'package:doxan/app/flavor.dart';
-import 'package:doxan/app/l10n/app_localizations.dart';
-import 'package:doxan/app/router/app_router.dart';
-import 'package:doxan/app/theme/app_theme.dart';
-import 'package:doxan/features/auth/presentation/controllers/auth_session_binder.dart';
+import 'package:docxan/app/flavor.dart';
+import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:docxan/app/router/app_router.dart';
+import 'package:docxan/app/theme/app_theme.dart';
+import 'package:docxan/features/auth/presentation/controllers/auth_session_binder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DoxanApp extends ConsumerWidget {
-  const DoxanApp({super.key});
+class DocxanApp extends ConsumerWidget {
+  const DocxanApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,7 +18,7 @@ class DoxanApp extends ConsumerWidget {
       child: MaterialApp.router(
         title: flavor.displayName,
         debugShowCheckedModeBanner: flavor.isDev,
-        theme: DoxanTheme.light(),
+        theme: DocxanTheme.light(),
         routerConfig: router,
         locale: const Locale('es'),
         supportedLocales: AppLocalizations.supportedLocales,

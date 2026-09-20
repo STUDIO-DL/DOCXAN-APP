@@ -1,8 +1,8 @@
-import 'package:doxan/core/errors/app_failure.dart';
-import 'package:doxan/core/network/doxan_supabase.dart';
-import 'package:doxan/features/auth/data/datasources/google_auth_datasource.dart';
-import 'package:doxan/features/auth/domain/entities/auth_user.dart';
-import 'package:doxan/features/auth/domain/repositories/auth_repository.dart';
+import 'package:docxan/core/errors/app_failure.dart';
+import 'package:docxan/core/network/docxan_supabase.dart';
+import 'package:docxan/features/auth/data/datasources/google_auth_datasource.dart';
+import 'package:docxan/features/auth/domain/entities/auth_user.dart';
+import 'package:docxan/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthUser;
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -14,20 +14,20 @@ class AuthRepositoryImpl implements AuthRepository {
       GoogleAuthDatasource(webClientId: googleWebClientId);
 
   @override
-  bool get isConfigured => DoxanSupabase.isReady;
+  bool get isConfigured => DocxanSupabase.isReady;
 
   @override
   bool get isGoogleConfigured =>
-      DoxanSupabase.isReady && googleWebClientId.isNotEmpty;
+      DocxanSupabase.isReady && googleWebClientId.isNotEmpty;
 
   @override
   AuthUser? get currentUser =>
-      _map(DoxanSupabase.isReady ? DoxanSupabase.client.auth.currentUser : null);
+      _map(DocxanSupabase.isReady ? DocxanSupabase.client.auth.currentUser : null);
 
   @override
   Stream<AuthUser?> authChanges() {
-    if (!DoxanSupabase.isReady) return const Stream.empty();
-    return DoxanSupabase.client.auth.onAuthStateChange.map(
+    if (!DocxanSupabase.isReady) return const Stream.empty();
+    return DocxanSupabase.client.auth.onAuthStateChange.map(
       (event) => _map(event.session?.user),
     );
   }
@@ -36,7 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthUser> signInWithEmail(String email, String password) async {
     _ensureReady();
     try {
-      final response = await DoxanSupabase.client.auth.signInWithPassword(
+      final response = await DocxanSupabase.client.auth.signInWithPassword(
         email: email,
         password: password,
       );
@@ -55,7 +55,7 @@ class AuthRepositoryImpl implements AuthRepository {
     _ensureReady();
     final tokens = await _google.signIn();
     try {
-      final response = await DoxanSupabase.client.auth.signInWithIdToken(
+      final response = await DocxanSupabase.client.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: tokens.idToken,
         accessToken: tokens.accessToken,
@@ -74,7 +74,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<SignUpResult> signUp(String email, String password) async {
     _ensureReady();
     try {
-      final response = await DoxanSupabase.client.auth.signUp(
+      final response = await DocxanSupabase.client.auth.signUp(
         email: email,
         password: password,
       );
@@ -93,22 +93,22 @@ class AuthRepositoryImpl implements AuthRepository {
     if (googleWebClientId.isNotEmpty) {
       await _google.signOut();
     }
-    if (!DoxanSupabase.isReady) return;
-    await DoxanSupabase.client.auth.signOut();
+    if (!DocxanSupabase.isReady) return;
+    await DocxanSupabase.client.auth.signOut();
   }
 
   @override
   Future<void> sendPasswordReset(String email) async {
     _ensureReady();
     try {
-      await DoxanSupabase.client.auth.resetPasswordForEmail(email);
+      await DocxanSupabase.client.auth.resetPasswordForEmail(email);
     } on AuthException catch (error) {
       throw AuthFailure(error.message);
     }
   }
 
   void _ensureReady() {
-    if (!DoxanSupabase.isReady) {
+    if (!DocxanSupabase.isReady) {
       throw const AuthFailure(
         'Supabase no está configurado. Crea app/env.json y relanza.',
       );

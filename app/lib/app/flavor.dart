@@ -22,7 +22,7 @@ class FlavorConfig {
 
   static const dev = FlavorConfig(
     flavor: AppFlavor.dev,
-    displayName: 'Doxan Dev',
+    displayName: 'Docxan Dev',
     supabaseUrl: String.fromEnvironment('SUPABASE_URL'),
     supabaseAnonKey: String.fromEnvironment('SUPABASE_ANON_KEY'),
     googleWebClientId: String.fromEnvironment('GOOGLE_WEB_CLIENT_ID'),
@@ -30,7 +30,7 @@ class FlavorConfig {
 
   static const prod = FlavorConfig(
     flavor: AppFlavor.prod,
-    displayName: 'Doxan',
+    displayName: 'Docxan',
     supabaseUrl: String.fromEnvironment('SUPABASE_URL'),
     supabaseAnonKey: String.fromEnvironment('SUPABASE_ANON_KEY'),
     googleWebClientId: String.fromEnvironment('GOOGLE_WEB_CLIENT_ID'),

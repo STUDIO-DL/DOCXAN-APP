@@ -1,6 +1,6 @@
-import 'package:doxan/app/app.dart';
-import 'package:doxan/app/flavor.dart';
-import 'package:doxan/core/constants/app_constants.dart';
+import 'package:docxan/app/app.dart';
+import 'package:docxan/app/flavor.dart';
+import 'package:docxan/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +12,7 @@ void main() {
         overrides: [
           flavorConfigProvider.overrideWithValue(FlavorConfig.dev),
         ],
-        child: const DoxanApp(),
+        child: const DocxanApp(),
       ),
     );
 

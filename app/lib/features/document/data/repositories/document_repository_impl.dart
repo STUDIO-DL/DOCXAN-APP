@@ -1,4 +1,4 @@
-import 'package:doxan/features/document/domain/repositories/document_repository.dart';
+import 'package:docxan/features/document/domain/repositories/document_repository.dart';
 
 class DocumentRepositoryImpl implements DocumentRepository {
   @override

@@ -97,7 +97,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In es, this message translates to:
-  /// **'Doxan'**
+  /// **'Docxan'**
   String get appName;
 
   /// No description provided for @splashTagline.
@@ -195,6 +195,198 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Buscar'**
   String get searchTitle;
+
+  /// No description provided for @homeSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus documentos, siempre contigo. Escanea, organiza y accede cuando lo necesites.'**
+  String get homeSubtitle;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver todos'**
+  String get viewAll;
+
+  /// No description provided for @recentDocuments.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos recientes'**
+  String get recentDocuments;
+
+  /// No description provided for @recentFolders.
+  ///
+  /// In es, this message translates to:
+  /// **'Carpetas recientes'**
+  String get recentFolders;
+
+  /// No description provided for @storageUsed.
+  ///
+  /// In es, this message translates to:
+  /// **'{used} de {total}'**
+  String storageUsed(String used, String total);
+
+  /// No description provided for @addNewFolder.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir nueva carpeta'**
+  String get addNewFolder;
+
+  /// No description provided for @folderName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre de la carpeta'**
+  String get folderName;
+
+  /// No description provided for @folderNameHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Personal'**
+  String get folderNameHint;
+
+  /// No description provided for @createFolder.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear'**
+  String get createFolder;
+
+  /// No description provided for @cancel.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get cancel;
+
+  /// No description provided for @folderNameEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe un nombre.'**
+  String get folderNameEmpty;
+
+  /// No description provided for @folderExists.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya existe una carpeta con ese nombre.'**
+  String get folderExists;
+
+  /// No description provided for @fileType.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de archivo'**
+  String get fileType;
+
+  /// No description provided for @tags.
+  ///
+  /// In es, this message translates to:
+  /// **'Etiquetas'**
+  String get tags;
+
+  /// No description provided for @date.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha'**
+  String get date;
+
+  /// No description provided for @urgent.
+  ///
+  /// In es, this message translates to:
+  /// **'Urgente'**
+  String get urgent;
+
+  /// No description provided for @pending.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get pending;
+
+  /// No description provided for @today.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy'**
+  String get today;
+
+  /// No description provided for @thisWeek.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta semana'**
+  String get thisWeek;
+
+  /// No description provided for @lastMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Mes pasado'**
+  String get lastMonth;
+
+  /// No description provided for @accountAndProfile.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta y perfil'**
+  String get accountAndProfile;
+
+  /// No description provided for @storagePlan.
+  ///
+  /// In es, this message translates to:
+  /// **'Plan de almacenamiento'**
+  String get storagePlan;
+
+  /// No description provided for @personalData.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos personales'**
+  String get personalData;
+
+  /// No description provided for @documentsSection.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos'**
+  String get documentsSection;
+
+  /// No description provided for @ocrLanguage.
+  ///
+  /// In es, this message translates to:
+  /// **'OCR idiomas'**
+  String get ocrLanguage;
+
+  /// No description provided for @defaultFormat.
+  ///
+  /// In es, this message translates to:
+  /// **'Formatos predeterminados'**
+  String get defaultFormat;
+
+  /// No description provided for @application.
+  ///
+  /// In es, this message translates to:
+  /// **'Aplicación'**
+  String get application;
+
+  /// No description provided for @securityAndPrivacy.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguridad y privacidad'**
+  String get securityAndPrivacy;
+
+  /// No description provided for @notifications.
+  ///
+  /// In es, this message translates to:
+  /// **'Notificaciones'**
+  String get notifications;
+
+  /// No description provided for @themeAndAppearance.
+  ///
+  /// In es, this message translates to:
+  /// **'Tema (oscuro/claro)'**
+  String get themeAndAppearance;
+
+  /// No description provided for @totalStorage.
+  ///
+  /// In es, this message translates to:
+  /// **'Almacenamiento total'**
+  String get totalStorage;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver detalles'**
+  String get viewDetails;
 
   /// No description provided for @recents.
   ///
@@ -457,7 +649,7 @@ abstract class AppLocalizations {
   /// No description provided for @lockTitle.
   ///
   /// In es, this message translates to:
-  /// **'Desbloquear Doxan'**
+  /// **'Desbloquear Docxan'**
   String get lockTitle;
 
   /// No description provided for @lockSubtitle.
@@ -493,14 +685,32 @@ abstract class AppLocalizations {
   /// No description provided for @emptyFoldersBody.
   ///
   /// In es, this message translates to:
-  /// **'Crea Personal, Universidad o Trabajo para ordenar lo que escanees.'**
+  /// **'Crea una carpeta para ordenar lo que escanees.'**
   String get emptyFoldersBody;
+
+  /// No description provided for @emptyDocuments.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay documentos'**
+  String get emptyDocuments;
+
+  /// No description provided for @emptyDocumentsBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Escanea un papel para crear el primero.'**
+  String get emptyDocumentsBody;
 
   /// No description provided for @emptySearch.
   ///
   /// In es, this message translates to:
   /// **'Sin resultados'**
   String get emptySearch;
+
+  /// No description provided for @emptySearchBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuando tengas documentos, aparecerán aquí.'**
+  String get emptySearchBody;
 
   /// No description provided for @comingSoon.
   ///

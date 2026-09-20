@@ -1,4 +1,4 @@
-# Arquitectura Doxan
+# Arquitectura Docxan
 
 Cliente-servidor **offline-first**. Drift (local) es la fuente de verdad diaria. Supabase guarda metadatos no sensibles. Cloudflare R2 guarda **solo ciphertext**.
 
@@ -25,5 +25,5 @@ Clave de objeto: `{user_id}/{document_id}/{backup_id}.bin`
 
 | Flavor | applicationId        | entrypoint          |
 |--------|----------------------|---------------------|
-| dev    | app.doxan.dev        | lib/main_dev.dart   |
-| prod   | app.doxan            | lib/main_prod.dart  |
+| dev    | app.docxan.dev       | lib/main_dev.dart   |
+| prod   | app.docxan           | lib/main_prod.dart  |

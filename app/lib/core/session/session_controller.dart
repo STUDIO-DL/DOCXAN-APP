@@ -1,4 +1,4 @@
-import 'package:doxan/core/session/session.dart';
+import 'package:docxan/core/session/session.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SessionController extends Notifier<Session> {

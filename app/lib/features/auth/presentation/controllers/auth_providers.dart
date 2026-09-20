@@ -1,6 +1,6 @@
-import 'package:doxan/app/flavor.dart';
-import 'package:doxan/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:doxan/features/auth/domain/repositories/auth_repository.dart';
+import 'package:docxan/app/flavor.dart';
+import 'package:docxan/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:docxan/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {

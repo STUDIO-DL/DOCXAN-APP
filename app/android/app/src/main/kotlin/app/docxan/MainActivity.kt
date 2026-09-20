@@ -1,4 +1,4 @@
-package app.doxan
+package app.docxan
 
 import io.flutter.embedding.android.FlutterActivity
 

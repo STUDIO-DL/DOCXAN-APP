@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     {
       error: "not_configured",
       message:
-        "Crea la cuenta Cloudflare, buckets doxan-backups-dev/prod y los secrets R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.",
+        "Crea la cuenta Cloudflare, buckets docxan-backups-dev/prod y los secrets R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.",
     },
     501,
   );

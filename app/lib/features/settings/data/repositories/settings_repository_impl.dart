@@ -1,4 +1,4 @@
-import 'package:doxan/features/settings/domain/repositories/settings_repository.dart';
+import 'package:docxan/features/settings/domain/repositories/settings_repository.dart';
 
 class SettingsRepositoryImpl implements SettingsRepository {
   @override

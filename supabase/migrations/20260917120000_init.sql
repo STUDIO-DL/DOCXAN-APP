@@ -1,4 +1,4 @@
--- Doxan metadata. Never store OCR plaintext or document blobs here.
+-- Docxan metadata. Never store OCR plaintext or document blobs here.
 -- Guest mode is local-only: no grants to `anon`.
 
 create table if not exists public.folders (

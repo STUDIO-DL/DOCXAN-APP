@@ -10,6 +10,35 @@ class FolderSummary {
   final String name;
   final int documentCount;
   final DateTime updatedAt;
+
+  FolderSummary copyWith({
+    String? name,
+    int? documentCount,
+    DateTime? updatedAt,
+  }) {
+    return FolderSummary(
+      id: id,
+      name: name ?? this.name,
+      documentCount: documentCount ?? this.documentCount,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'documentCount': documentCount,
+    'updatedAt': updatedAt.toIso8601String(),
+  };
+
+  factory FolderSummary.fromJson(Map<String, dynamic> json) {
+    return FolderSummary(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      documentCount: json['documentCount'] as int,
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+    );
+  }
 }
 
 class DocumentSummary {
@@ -21,8 +50,7 @@ class DocumentSummary {
     required this.folderId,
     required this.folderName,
     required this.updatedAt,
-    required this.ocrText,
-    this.isDemo = false,
+    this.ocrText = '',
   });
 
   final String id;
@@ -33,5 +61,28 @@ class DocumentSummary {
   final String folderName;
   final DateTime updatedAt;
   final String ocrText;
-  final bool isDemo;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'format': format,
+    'sizeBytes': sizeBytes,
+    'folderId': folderId,
+    'folderName': folderName,
+    'updatedAt': updatedAt.toIso8601String(),
+    'ocrText': ocrText,
+  };
+
+  factory DocumentSummary.fromJson(Map<String, dynamic> json) {
+    return DocumentSummary(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      format: json['format'] as String,
+      sizeBytes: json['sizeBytes'] as int,
+      folderId: json['folderId'] as String,
+      folderName: json['folderName'] as String,
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      ocrText: json['ocrText'] as String? ?? '',
+    );
+  }
 }

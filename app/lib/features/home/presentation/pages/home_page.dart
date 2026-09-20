@@ -1,11 +1,12 @@
-import 'package:doxan/app/l10n/app_localizations.dart';
-import 'package:doxan/app/router/routes.dart';
-import 'package:doxan/app/theme/colors.dart';
-import 'package:doxan/core/demo/demo_catalog.dart';
-import 'package:doxan/core/models/library_models.dart';
-import 'package:doxan/core/session/session_controller.dart';
-import 'package:doxan/core/utils/formatters.dart';
-import 'package:doxan/core/widgets/doxan_search_bar.dart';
+import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:docxan/app/router/routes.dart';
+import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/library/library_controller.dart';
+import 'package:docxan/core/session/session_controller.dart';
+import 'package:docxan/core/utils/formatters.dart';
+import 'package:docxan/core/widgets/docxan_empty_state.dart';
+import 'package:docxan/core/widgets/docxan_library_tiles.dart';
+import 'package:docxan/core/widgets/docxan_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,57 +18,156 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final session = ref.watch(sessionProvider);
-    final greetingKey = greetingFor(DateTime.now());
-    final greeting = switch (greetingKey) {
+    final library = ref.watch(libraryProvider);
+    final recents = library.documents;
+    final recentFolders = library.folders;
+    final greeting = switch (greetingFor(DateTime.now())) {
       'morning' => l10n.goodMorning,
       'afternoon' => l10n.goodAfternoon,
       _ => l10n.goodEvening,
     };
 
     return Scaffold(
+      backgroundColor: DocxanColors.paper,
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
-            DoxanSearchBar(
-              hint: l10n.searchDocuments,
-              onTap: () => context.push(AppRoutes.search),
-            ),
+            DocxanAppHeader(title: l10n.appName, showBrand: true),
             const SizedBox(height: 24),
             Text(greeting, style: Theme.of(context).textTheme.headlineMedium),
+            const SizedBox(height: 6),
+            Text(
+              l10n.homeSubtitle,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 20),
+            DocxanSearchBar(
+              hint: l10n.searchDocuments,
+              onTap: () => context.go(AppRoutes.search),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: _StatusCard(
+                    icon: Icons.cloud_upload_outlined,
+                    title: l10n.syncStatus,
+                    subtitle: session.backupEnabled ? l10n.syncOk : l10n.syncOffline,
+                    showDot: true,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _StatusCard(
+                    icon: Icons.sd_storage_outlined,
+                    title: l10n.storageStatus,
+                    subtitle: formatBytes(library.usedBytes),
+                  ),
+                ),
+              ],
+            ),
             if (session.isGuest) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               _GuestBanner(
                 message: l10n.guestBanner,
                 action: l10n.createAccount,
                 onTap: () => context.push(AppRoutes.register),
               ),
             ],
-            const SizedBox(height: 20),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _StatusChip(
-                  icon: Icons.cloud_off_outlined,
-                  label: session.backupEnabled ? l10n.syncOk : l10n.syncOffline,
-                ),
-                _StatusChip(
-                  icon: Icons.sd_storage_outlined,
-                  label: '${l10n.storageStatus} · 1.1 MB',
-                ),
-              ],
-            ),
             const SizedBox(height: 28),
-            Text(l10n.recents, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            for (final doc in DemoCatalog.documents)
-              _DocumentTile(
-                document: doc,
-                onTap: () => context.push(AppRoutes.documentPath(doc.id)),
+            DocxanSectionHeader(
+              title: l10n.recentDocuments,
+              action: l10n.viewAll,
+              onAction: () => context.go(AppRoutes.search),
+            ),
+            if (recents.isEmpty)
+              DocxanEmptyState(
+                icon: Icons.description_outlined,
+                title: l10n.emptyDocuments,
+                body: l10n.emptyDocumentsBody,
+              )
+            else
+              for (final doc in recents)
+                DocxanDocumentTile(
+                  document: doc,
+                  onTap: () => context.push(AppRoutes.documentPath(doc.id)),
+                ),
+            const SizedBox(height: 16),
+            DocxanSectionHeader(
+              title: l10n.recentFolders,
+              action: l10n.viewAll,
+              onAction: () => context.go(AppRoutes.folders),
+            ),
+            if (recentFolders.isEmpty)
+              DocxanEmptyState(
+                icon: Icons.folder_outlined,
+                title: l10n.emptyFolders,
+                body: l10n.emptyFoldersBody,
+              )
+            else
+              SizedBox(
+                height: 92,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    for (final folder in recentFolders.take(4))
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: DocxanFolderCard(
+                          folder: folder,
+                          compact: true,
+                          onTap: () => context.go(AppRoutes.folders),
+                        ),
+                      ),
+                  ],
+                ),
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _StatusCard extends StatelessWidget {
+  const _StatusCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    this.showDot = false,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool showDot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: DocxanColors.canvas,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 20, color: DocxanColors.inkMuted),
+              const Spacer(),
+              if (showDot)
+                const CircleAvatar(radius: 4, backgroundColor: DocxanColors.accent),
+              const Icon(Icons.chevron_right, size: 18, color: DocxanColors.inkMuted),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(title, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 2),
+          Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+        ],
       ),
     );
   }
@@ -89,8 +189,8 @@ class _GuestBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: DoxanColors.chip,
-        borderRadius: BorderRadius.circular(14),
+        color: DocxanColors.accentSoft,
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,65 +199,6 @@ class _GuestBanner extends StatelessWidget {
           TextButton(onPressed: onTap, child: Text(action)),
         ],
       ),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: DoxanColors.paper,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: DoxanColors.hairline),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: DoxanColors.inkMuted),
-          const SizedBox(width: 6),
-          Text(label, style: Theme.of(context).textTheme.bodyMedium),
-        ],
-      ),
-    );
-  }
-}
-
-class _DocumentTile extends StatelessWidget {
-  const _DocumentTile({required this.document, required this.onTap});
-
-  final DocumentSummary document;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onTap,
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: DoxanColors.paper,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: DoxanColors.hairline),
-        ),
-        child: const Icon(Icons.description_outlined, color: DoxanColors.ink),
-      ),
-      title: Text(document.name),
-      subtitle: Text(
-        '${document.format} · ${formatBytes(document.sizeBytes)}',
-      ),
-      trailing: document.isDemo
-          ? const Text('Demo', style: TextStyle(color: DoxanColors.inkMuted))
-          : null,
     );
   }
 }

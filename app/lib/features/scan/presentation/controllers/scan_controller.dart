@@ -1,4 +1,4 @@
-import 'package:doxan/features/scan/presentation/states/scan_state.dart';
+import 'package:docxan/features/scan/presentation/states/scan_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ScanController extends Notifier<ScanState> {

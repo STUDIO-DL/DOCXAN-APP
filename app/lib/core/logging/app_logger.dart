@@ -1,4 +1,4 @@
-import 'package:doxan/app/flavor.dart';
+import 'package:docxan/app/flavor.dart';
 import 'package:flutter/foundation.dart';
 
 abstract final class AppLogger {
@@ -10,7 +10,7 @@ abstract final class AppLogger {
 
   static void debug(String message) {
     if (kDebugMode) {
-      debugPrint('[doxan][${_flavor?.flavor.name ?? 'app'}] $message');
+      debugPrint('[docxan][${_flavor?.flavor.name ?? 'app'}] $message');
     }
   }
 }

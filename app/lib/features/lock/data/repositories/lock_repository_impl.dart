@@ -1,4 +1,4 @@
-import 'package:doxan/features/lock/domain/repositories/lock_repository.dart';
+import 'package:docxan/features/lock/domain/repositories/lock_repository.dart';
 
 class LockRepositoryImpl implements LockRepository {
   @override

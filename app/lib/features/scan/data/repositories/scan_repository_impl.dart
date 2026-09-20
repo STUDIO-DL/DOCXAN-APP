@@ -1,4 +1,4 @@
-import 'package:doxan/features/scan/domain/repositories/scan_repository.dart';
+import 'package:docxan/features/scan/domain/repositories/scan_repository.dart';
 
 class ScanRepositoryImpl implements ScanRepository {
   @override

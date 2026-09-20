@@ -1,13 +1,13 @@
 abstract final class AppConstants {
-  static const appName = 'Doxan';
-  static const applicationId = 'app.doxan';
+  static const appName = 'Docxan';
+  static const applicationId = 'app.docxan';
   static const splashDuration = Duration(milliseconds: 1400);
   static const pinLength = 6;
   static const trashRetentionDays = 30;
   static const targetPageBytesMin = 150 * 1024;
   static const targetPageBytesMax = 500 * 1024;
-  static const privacyUrl = 'https://doxan.app/privacy';
-  static const termsUrl = 'https://doxan.app/terms';
+  static const privacyUrl = 'https://docxan.app/privacy';
+  static const termsUrl = 'https://docxan.app/terms';
 }
 
 abstract final class StorageKeys {

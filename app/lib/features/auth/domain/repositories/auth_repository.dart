@@ -1,4 +1,4 @@
-import 'package:doxan/features/auth/domain/entities/auth_user.dart';
+import 'package:docxan/features/auth/domain/entities/auth_user.dart';
 
 abstract interface class AuthRepository {
   bool get isConfigured;

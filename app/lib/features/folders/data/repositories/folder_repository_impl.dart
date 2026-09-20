@@ -1,4 +1,4 @@
-import 'package:doxan/features/folders/domain/repositories/folder_repository.dart';
+import 'package:docxan/features/folders/domain/repositories/folder_repository.dart';
 
 class FolderRepositoryImpl implements FolderRepository {
   @override

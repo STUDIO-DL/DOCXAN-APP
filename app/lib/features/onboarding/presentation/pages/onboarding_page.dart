@@ -1,9 +1,9 @@
-import 'package:doxan/app/l10n/app_localizations.dart';
-import 'package:doxan/app/router/routes.dart';
-import 'package:doxan/app/theme/colors.dart';
-import 'package:doxan/app/theme/spacing.dart';
-import 'package:doxan/core/session/session_controller.dart';
-import 'package:doxan/core/widgets/doxan_logo.dart';
+import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:docxan/app/router/routes.dart';
+import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/spacing.dart';
+import 'package:docxan/core/session/session_controller.dart';
+import 'package:docxan/core/widgets/docxan_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,13 +15,13 @@ class OnboardingPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: DoxanColors.paper,
+      backgroundColor: DocxanColors.paper,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           children: [
-            const DoxanLogo(size: 120),
-            const SizedBox(height: DoxanSpacing.md),
+            const DocxanLogo(size: 120),
+            const SizedBox(height: DocxanSpacing.md),
             Text(
               l10n.onboardingTitle,
               textAlign: TextAlign.center,
@@ -39,7 +39,7 @@ class OnboardingPage extends ConsumerWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: DoxanColors.ink,
+                color: DocxanColors.ink,
               ),
             ),
             const SizedBox(height: 28),

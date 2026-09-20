@@ -1,68 +1,68 @@
-import 'package:doxan/app/theme/colors.dart';
-import 'package:doxan/app/theme/typography.dart';
+import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/typography.dart';
 import 'package:flutter/material.dart';
 
-abstract final class DoxanTheme {
+abstract final class DocxanTheme {
   static ThemeData light() {
     const scheme = ColorScheme.light(
-      primary: DoxanColors.ink,
-      onPrimary: DoxanColors.paper,
-      secondary: DoxanColors.inkMuted,
-      surface: DoxanColors.paper,
-      onSurface: DoxanColors.ink,
-      error: DoxanColors.danger,
+      primary: DocxanColors.accent,
+      onPrimary: DocxanColors.paper,
+      secondary: DocxanColors.inkMuted,
+      surface: DocxanColors.paper,
+      onSurface: DocxanColors.ink,
+      error: DocxanColors.danger,
     );
 
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: DoxanColors.canvas,
+      scaffoldBackgroundColor: DocxanColors.paper,
       visualDensity: VisualDensity.standard,
     );
 
     return base.copyWith(
-      textTheme: DoxanTypography.textTheme(base.textTheme),
+      textTheme: DocxanTypography.textTheme(base.textTheme),
       appBarTheme: const AppBarTheme(
-        backgroundColor: DoxanColors.canvas,
-        foregroundColor: DoxanColors.ink,
+        backgroundColor: DocxanColors.canvas,
+        foregroundColor: DocxanColors.ink,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: DoxanColors.paper,
-        indicatorColor: DoxanColors.chip,
+        backgroundColor: DocxanColors.paper,
+        indicatorColor: DocxanColors.chip,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
             fontSize: 12,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            color: selected ? DoxanColors.ink : DoxanColors.inkMuted,
+            color: selected ? DocxanColors.ink : DocxanColors.inkMuted,
           );
         }),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: DoxanColors.paper,
+        fillColor: DocxanColors.paper,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: DoxanColors.hairline),
+          borderSide: const BorderSide(color: DocxanColors.hairline),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: DoxanColors.hairline),
+          borderSide: const BorderSide(color: DocxanColors.hairline),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: DoxanColors.ink, width: 1.4),
+          borderSide: const BorderSide(color: DocxanColors.ink, width: 1.4),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: DoxanColors.ink,
-          foregroundColor: DoxanColors.paper,
+          backgroundColor: DocxanColors.accent,
+          foregroundColor: DocxanColors.paper,
           minimumSize: const Size.fromHeight(52),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
@@ -70,14 +70,14 @@ abstract final class DoxanTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: DoxanColors.ink,
+          foregroundColor: DocxanColors.ink,
           minimumSize: const Size.fromHeight(52),
-          side: const BorderSide(color: DoxanColors.hairline),
+          side: const BorderSide(color: DocxanColors.hairline),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
       ),
-      dividerColor: DoxanColors.hairline,
+      dividerColor: DocxanColors.hairline,
     );
   }
 }

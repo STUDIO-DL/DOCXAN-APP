@@ -1,16 +1,16 @@
-import 'package:doxan/app/router/routes.dart';
-import 'package:doxan/app/shell/main_shell.dart';
-import 'package:doxan/core/session/session_controller.dart';
-import 'package:doxan/features/auth/auth.dart';
-import 'package:doxan/features/backup/backup.dart';
-import 'package:doxan/features/document/document.dart';
-import 'package:doxan/features/folders/folders.dart';
-import 'package:doxan/features/home/home.dart';
-import 'package:doxan/features/lock/lock.dart';
-import 'package:doxan/features/onboarding/onboarding.dart';
-import 'package:doxan/features/scan/scan.dart';
-import 'package:doxan/features/search/search.dart';
-import 'package:doxan/features/settings/settings.dart';
+import 'package:docxan/app/router/routes.dart';
+import 'package:docxan/app/shell/main_shell.dart';
+import 'package:docxan/core/session/session_controller.dart';
+import 'package:docxan/features/auth/auth.dart';
+import 'package:docxan/features/backup/backup.dart';
+import 'package:docxan/features/document/document.dart';
+import 'package:docxan/features/folders/folders.dart';
+import 'package:docxan/features/home/home.dart';
+import 'package:docxan/features/lock/lock.dart';
+import 'package:docxan/features/onboarding/onboarding.dart';
+import 'package:docxan/features/scan/scan.dart';
+import 'package:docxan/features/search/search.dart';
+import 'package:docxan/features/settings/settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -73,10 +73,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LockPage(),
       ),
       GoRoute(
-        path: AppRoutes.search,
-        builder: (context, state) => const SearchPage(),
-      ),
-      GoRoute(
         path: AppRoutes.backup,
         builder: (context, state) => const BackupPage(),
       ),
@@ -112,6 +108,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.scan,
                 builder: (context, state) => const ScanPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.search,
+                builder: (context, state) => const SearchPage(),
               ),
             ],
           ),

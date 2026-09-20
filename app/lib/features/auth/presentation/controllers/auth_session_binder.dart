@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:doxan/core/session/session_controller.dart';
-import 'package:doxan/features/auth/domain/entities/auth_user.dart';
-import 'package:doxan/features/auth/presentation/controllers/auth_providers.dart';
+import 'package:docxan/core/session/session_controller.dart';
+import 'package:docxan/features/auth/domain/entities/auth_user.dart';
+import 'package:docxan/features/auth/presentation/controllers/auth_providers.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

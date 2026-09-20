@@ -1,6 +1,6 @@
-import 'package:doxan/app/l10n/app_localizations.dart';
-import 'package:doxan/app/theme/colors.dart';
-import 'package:doxan/core/session/session_controller.dart';
+import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/session/session_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -52,7 +52,7 @@ class BackupPage extends ConsumerWidget {
               'Hard delete a los 30 días. Pendiente de Drift + R2.',
               style: Theme.of(
                 context,
-              ).textTheme.bodyMedium?.copyWith(color: DoxanColors.inkMuted),
+              ).textTheme.bodyMedium?.copyWith(color: DocxanColors.inkMuted),
             ),
           ],
         ),

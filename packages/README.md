@@ -1,2 +1,2 @@
 # Packages internos (Fase 2+)
-# Extrae aquí `doxan_scan` o `doxan_crypto` si un módulo pesa demasiado.
+# Extrae aquí `docxan_scan` o `docxan_crypto` si un módulo pesa demasiado.
