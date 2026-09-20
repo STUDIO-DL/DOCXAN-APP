@@ -418,6 +418,12 @@ abstract class AppLocalizations {
   /// **'Inicio'**
   String get home;
 
+  /// No description provided for @searchTab.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar'**
+  String get searchTab;
+
   /// No description provided for @scanCta.
   ///
   /// In es, this message translates to:
@@ -435,6 +441,174 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'La cámara, el recorte y el OCR se conectan en la semana 2. Este visor marca el flujo de captura.'**
   String get scanPlaceholderBody;
+
+  /// No description provided for @scanDocument.
+  ///
+  /// In es, this message translates to:
+  /// **'Escanear documento'**
+  String get scanDocument;
+
+  /// No description provided for @editDocument.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar documento'**
+  String get editDocument;
+
+  /// No description provided for @placeDocumentInFrame.
+  ///
+  /// In es, this message translates to:
+  /// **'Coloca el documento dentro del marco.'**
+  String get placeDocumentInFrame;
+
+  /// No description provided for @flash.
+  ///
+  /// In es, this message translates to:
+  /// **'Flash'**
+  String get flash;
+
+  /// No description provided for @gallery.
+  ///
+  /// In es, this message translates to:
+  /// **'Galería'**
+  String get gallery;
+
+  /// No description provided for @auto.
+  ///
+  /// In es, this message translates to:
+  /// **'Auto'**
+  String get auto;
+
+  /// No description provided for @manual.
+  ///
+  /// In es, this message translates to:
+  /// **'Manual'**
+  String get manual;
+
+  /// No description provided for @autoDetectionSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'La detección automática estará disponible más adelante. Usa Manual para recortar.'**
+  String get autoDetectionSoon;
+
+  /// No description provided for @crop.
+  ///
+  /// In es, this message translates to:
+  /// **'Recortar'**
+  String get crop;
+
+  /// No description provided for @rotate.
+  ///
+  /// In es, this message translates to:
+  /// **'Rotar'**
+  String get rotate;
+
+  /// No description provided for @brightness.
+  ///
+  /// In es, this message translates to:
+  /// **'Brillo'**
+  String get brightness;
+
+  /// No description provided for @contrast.
+  ///
+  /// In es, this message translates to:
+  /// **'Contraste'**
+  String get contrast;
+
+  /// No description provided for @filters.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros'**
+  String get filters;
+
+  /// No description provided for @filterOriginal.
+  ///
+  /// In es, this message translates to:
+  /// **'Original'**
+  String get filterOriginal;
+
+  /// No description provided for @filterDocument.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento'**
+  String get filterDocument;
+
+  /// No description provided for @filterBw.
+  ///
+  /// In es, this message translates to:
+  /// **'Blanco y negro'**
+  String get filterBw;
+
+  /// No description provided for @filterColor.
+  ///
+  /// In es, this message translates to:
+  /// **'Color'**
+  String get filterColor;
+
+  /// No description provided for @addAnotherPage.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir otra página'**
+  String get addAnotherPage;
+
+  /// No description provided for @addAnotherPageSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear un PDF de varias páginas'**
+  String get addAnotherPageSubtitle;
+
+  /// No description provided for @saveDocument.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar documento'**
+  String get saveDocument;
+
+  /// No description provided for @savingDocument.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardando documento…'**
+  String get savingDocument;
+
+  /// No description provided for @recognizingText.
+  ///
+  /// In es, this message translates to:
+  /// **'Reconociendo texto…'**
+  String get recognizingText;
+
+  /// No description provided for @cameraUnavailable.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo abrir la cámara. Comprueba el permiso.'**
+  String get cameraUnavailable;
+
+  /// No description provided for @cameraPermissionDenied.
+  ///
+  /// In es, this message translates to:
+  /// **'Docxan necesita la cámara para escanear.'**
+  String get cameraPermissionDenied;
+
+  /// No description provided for @saveFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo guardar el documento.'**
+  String get saveFailed;
+
+  /// No description provided for @documentNotFound.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento no encontrado'**
+  String get documentNotFound;
+
+  /// No description provided for @noPagesToSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Añade al menos una página para guardar.'**
+  String get noPagesToSave;
+
+  /// No description provided for @ocrUnavailable.
+  ///
+  /// In es, this message translates to:
+  /// **'El texto se guardó vacío. El PDF está listo.'**
+  String get ocrUnavailable;
 
   /// No description provided for @newFolder.
   ///
@@ -735,6 +909,444 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Papelera'**
   String get trash;
+
+  /// No description provided for @foldersSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Organiza tus documentos fácilmente. Accede a tus carpetas y encuentra lo que necesitas.'**
+  String get foldersSubtitle;
+
+  /// No description provided for @searchFolders.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar carpetas...'**
+  String get searchFolders;
+
+  /// No description provided for @allFolders.
+  ///
+  /// In es, this message translates to:
+  /// **'Todas las carpetas'**
+  String get allFolders;
+
+  /// No description provided for @myFiles.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis archivos'**
+  String get myFiles;
+
+  /// No description provided for @favorites.
+  ///
+  /// In es, this message translates to:
+  /// **'Favoritos'**
+  String get favorites;
+
+  /// No description provided for @quickAccess.
+  ///
+  /// In es, this message translates to:
+  /// **'Accesos rápidos'**
+  String get quickAccess;
+
+  /// No description provided for @otherFolder.
+  ///
+  /// In es, this message translates to:
+  /// **'Otros'**
+  String get otherFolder;
+
+  /// No description provided for @pinSetupTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea tu PIN'**
+  String get pinSetupTitle;
+
+  /// No description provided for @pinSetupSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige 6 dígitos para proteger Docxan en este dispositivo.'**
+  String get pinSetupSubtitle;
+
+  /// No description provided for @pinConfirmTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Repite el PIN'**
+  String get pinConfirmTitle;
+
+  /// No description provided for @pinConfirmSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelve a introducir el mismo PIN para confirmarlo.'**
+  String get pinConfirmSubtitle;
+
+  /// No description provided for @pinMismatch.
+  ///
+  /// In es, this message translates to:
+  /// **'Los PIN no coinciden. Inténtalo de nuevo.'**
+  String get pinMismatch;
+
+  /// No description provided for @pinWrong.
+  ///
+  /// In es, this message translates to:
+  /// **'PIN incorrecto'**
+  String get pinWrong;
+
+  /// No description provided for @pinCurrentTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'PIN actual'**
+  String get pinCurrentTitle;
+
+  /// No description provided for @changePin.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar PIN'**
+  String get changePin;
+
+  /// No description provided for @pinChanged.
+  ///
+  /// In es, this message translates to:
+  /// **'PIN actualizado'**
+  String get pinChanged;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar cambios'**
+  String get saveChanges;
+
+  /// No description provided for @ocrSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Texto OCR guardado'**
+  String get ocrSaved;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In es, this message translates to:
+  /// **'PDF'**
+  String get exportPdf;
+
+  /// No description provided for @exportJpg.
+  ///
+  /// In es, this message translates to:
+  /// **'JPG'**
+  String get exportJpg;
+
+  /// No description provided for @exportPng.
+  ///
+  /// In es, this message translates to:
+  /// **'PNG'**
+  String get exportPng;
+
+  /// No description provided for @exportWord.
+  ///
+  /// In es, this message translates to:
+  /// **'Word'**
+  String get exportWord;
+
+  /// No description provided for @download.
+  ///
+  /// In es, this message translates to:
+  /// **'Descargar'**
+  String get download;
+
+  /// No description provided for @syncComingSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'La sincronización estará disponible más adelante.'**
+  String get syncComingSoon;
+
+  /// No description provided for @syncAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Sincronizar'**
+  String get syncAction;
+
+  /// No description provided for @language.
+  ///
+  /// In es, this message translates to:
+  /// **'Idioma'**
+  String get language;
+
+  /// No description provided for @spanish.
+  ///
+  /// In es, this message translates to:
+  /// **'Español'**
+  String get spanish;
+
+  /// No description provided for @appearance.
+  ///
+  /// In es, this message translates to:
+  /// **'Apariencia'**
+  String get appearance;
+
+  /// No description provided for @theme.
+  ///
+  /// In es, this message translates to:
+  /// **'Tema'**
+  String get theme;
+
+  /// No description provided for @lightTheme.
+  ///
+  /// In es, this message translates to:
+  /// **'Claro'**
+  String get lightTheme;
+
+  /// No description provided for @usedStorage.
+  ///
+  /// In es, this message translates to:
+  /// **'Usado por Docxan'**
+  String get usedStorage;
+
+  /// No description provided for @deviceStorage.
+  ///
+  /// In es, this message translates to:
+  /// **'Almacenamiento del dispositivo'**
+  String get deviceStorage;
+
+  /// No description provided for @storageUsedOf.
+  ///
+  /// In es, this message translates to:
+  /// **'{used} de {total}'**
+  String storageUsedOf(String used, String total);
+
+  /// No description provided for @cleanCache.
+  ///
+  /// In es, this message translates to:
+  /// **'Vaciar caché de escaneo'**
+  String get cleanCache;
+
+  /// No description provided for @cacheCleaned.
+  ///
+  /// In es, this message translates to:
+  /// **'Caché vaciada'**
+  String get cacheCleaned;
+
+  /// No description provided for @deleteLocalDocuments.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar documentos locales'**
+  String get deleteLocalDocuments;
+
+  /// No description provided for @documentsDeleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos locales eliminados'**
+  String get documentsDeleted;
+
+  /// No description provided for @documentName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del documento'**
+  String get documentName;
+
+  /// No description provided for @confirmDelete.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar?'**
+  String get confirmDelete;
+
+  /// No description provided for @confirmDeleteFolder.
+  ///
+  /// In es, this message translates to:
+  /// **'La carpeta se elimina y sus documentos pasan a Mis archivos.'**
+  String get confirmDeleteFolder;
+
+  /// No description provided for @confirmDeleteDocument.
+  ///
+  /// In es, this message translates to:
+  /// **'El documento irá a la papelera durante 30 días.'**
+  String get confirmDeleteDocument;
+
+  /// No description provided for @confirmDeleteAll.
+  ///
+  /// In es, this message translates to:
+  /// **'Se eliminarán de forma permanente todos los documentos locales.'**
+  String get confirmDeleteAll;
+
+  /// No description provided for @restore.
+  ///
+  /// In es, this message translates to:
+  /// **'Restaurar'**
+  String get restore;
+
+  /// No description provided for @deleteForever.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar definitivamente'**
+  String get deleteForever;
+
+  /// No description provided for @emptyCollection.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay documentos aquí'**
+  String get emptyCollection;
+
+  /// No description provided for @favorite.
+  ///
+  /// In es, this message translates to:
+  /// **'Favorito'**
+  String get favorite;
+
+  /// No description provided for @unfavorite.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar de favoritos'**
+  String get unfavorite;
+
+  /// No description provided for @moveToFolder.
+  ///
+  /// In es, this message translates to:
+  /// **'Mover a carpeta'**
+  String get moveToFolder;
+
+  /// No description provided for @noFolder.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis archivos'**
+  String get noFolder;
+
+  /// No description provided for @confirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar'**
+  String get confirm;
+
+  /// No description provided for @profile.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get profile;
+
+  /// No description provided for @filterOcr.
+  ///
+  /// In es, this message translates to:
+  /// **'Con texto OCR'**
+  String get filterOcr;
+
+  /// No description provided for @unlockWithBiometrics.
+  ///
+  /// In es, this message translates to:
+  /// **'Desbloquear con huella o Face unlock'**
+  String get unlockWithBiometrics;
+
+  /// No description provided for @biometricsUnavailable.
+  ///
+  /// In es, this message translates to:
+  /// **'La biometría no está disponible en este dispositivo.'**
+  String get biometricsUnavailable;
+
+  /// No description provided for @legal.
+  ///
+  /// In es, this message translates to:
+  /// **'Legal'**
+  String get legal;
+
+  /// No description provided for @createFolderHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Por ejemplo, Facturas'**
+  String get createFolderHint;
+
+  /// No description provided for @unknownStorage.
+  ///
+  /// In es, this message translates to:
+  /// **'Desconocido'**
+  String get unknownStorage;
+
+  /// No description provided for @scanTipLighting.
+  ///
+  /// In es, this message translates to:
+  /// **'Buena iluminación'**
+  String get scanTipLighting;
+
+  /// No description provided for @scanTipFrame.
+  ///
+  /// In es, this message translates to:
+  /// **'Mantén el documento dentro del marco'**
+  String get scanTipFrame;
+
+  /// No description provided for @scanTipShadows.
+  ///
+  /// In es, this message translates to:
+  /// **'Evita sombras sobre el papel'**
+  String get scanTipShadows;
+
+  /// No description provided for @scanTipParallel.
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono paralelo al documento'**
+  String get scanTipParallel;
+
+  /// No description provided for @scanTipBackground.
+  ///
+  /// In es, this message translates to:
+  /// **'Usa un fondo liso'**
+  String get scanTipBackground;
+
+  /// No description provided for @documentDetected.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento detectado'**
+  String get documentDetected;
+
+  /// No description provided for @syncNeedAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea una cuenta para sincronizar.'**
+  String get syncNeedAccount;
+
+  /// No description provided for @syncNotConfigured.
+  ///
+  /// In es, this message translates to:
+  /// **'Añade las claves de Supabase o R2 en env.json.'**
+  String get syncNotConfigured;
+
+  /// No description provided for @syncComplete.
+  ///
+  /// In es, this message translates to:
+  /// **'Sincronización lista.'**
+  String get syncComplete;
+
+  /// No description provided for @syncFailedMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar la sincronización.'**
+  String get syncFailedMessage;
+
+  /// No description provided for @syncNothingPending.
+  ///
+  /// In es, this message translates to:
+  /// **'Nada pendiente.'**
+  String get syncNothingPending;
+
+  /// No description provided for @syncInProgress.
+  ///
+  /// In es, this message translates to:
+  /// **'Sincronizando…'**
+  String get syncInProgress;
+
+  /// No description provided for @restoreComplete.
+  ///
+  /// In es, this message translates to:
+  /// **'Restauración lista.'**
+  String get restoreComplete;
+
+  /// No description provided for @restoreFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo restaurar el backup.'**
+  String get restoreFailed;
+
+  /// No description provided for @syncUploading.
+  ///
+  /// In es, this message translates to:
+  /// **'Subiendo'**
+  String get syncUploading;
+
+  /// No description provided for @syncFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'Error de sync'**
+  String get syncFailed;
 }
 
 class _AppLocalizationsDelegate

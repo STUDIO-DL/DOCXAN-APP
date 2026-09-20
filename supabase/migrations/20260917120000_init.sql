@@ -1,5 +1,8 @@
 -- Docxan metadata. Never store OCR plaintext or document blobs here.
 -- Guest mode is local-only: no grants to `anon`.
+--
+-- RLS: cada fila queda atada a auth.uid() = user_id.
+-- sync_status en documents: local_only | pending_upload | uploading | synced | failed.
 
 create table if not exists public.folders (
   id uuid primary key default gen_random_uuid(),

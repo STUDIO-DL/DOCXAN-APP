@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Docxan \u2014 escanea y organiza documentos.",
+    "description": "Docxan — escanea y organiza documentos.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

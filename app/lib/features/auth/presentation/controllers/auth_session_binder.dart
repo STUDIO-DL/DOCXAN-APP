@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:docxan/core/data/profile_repository.dart';
+import 'package:docxan/core/models/profile.dart';
 import 'package:docxan/core/session/session_controller.dart';
 import 'package:docxan/features/auth/domain/entities/auth_user.dart';
 import 'package:docxan/features/auth/presentation/controllers/auth_providers.dart';
@@ -26,10 +28,7 @@ class _AuthSessionBinderState extends ConsumerState<AuthSessionBinder> {
       final repo = ref.read(authRepositoryProvider);
       final current = repo.currentUser;
       if (current != null) {
-        ref.read(sessionProvider.notifier).signIn(
-          email: current.email ?? '',
-          userId: current.id,
-        );
+        _bindUser(current);
       }
       _subscription = repo.authChanges().listen((user) {
         if (!mounted) return;
@@ -40,12 +39,25 @@ class _AuthSessionBinderState extends ConsumerState<AuthSessionBinder> {
           }
           return;
         }
-        ref.read(sessionProvider.notifier).signIn(
-          email: user.email ?? '',
-          userId: user.id,
-        );
+        _bindUser(user);
       });
     });
+  }
+
+  void _bindUser(AuthUser user) {
+    ref.read(sessionProvider.notifier).signIn(
+      email: user.email ?? '',
+      userId: user.id,
+    );
+    ref.read(profileRepositoryProvider).upsert(
+      Profile(
+        id: user.id,
+        email: user.email,
+        displayName: user.email,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    );
   }
 
   @override

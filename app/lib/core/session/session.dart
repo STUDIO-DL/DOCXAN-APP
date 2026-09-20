@@ -10,6 +10,7 @@ class Session {
     this.pinSet = false,
     this.unlocked = true,
     this.backupEnabled = false,
+    this.biometricsEnabled = false,
   });
 
   final AuthStatus status;
@@ -20,6 +21,7 @@ class Session {
   final bool pinSet;
   final bool unlocked;
   final bool backupEnabled;
+  final bool biometricsEnabled;
 
   bool get isGuest => status == AuthStatus.guest;
   bool get isAuthenticated => status == AuthStatus.authenticated;
@@ -33,6 +35,7 @@ class Session {
     bool? pinSet,
     bool? unlocked,
     bool? backupEnabled,
+    bool? biometricsEnabled,
   }) {
     return Session(
       status: status ?? this.status,
@@ -43,6 +46,7 @@ class Session {
       pinSet: pinSet ?? this.pinSet,
       unlocked: unlocked ?? this.unlocked,
       backupEnabled: backupEnabled ?? this.backupEnabled,
+      biometricsEnabled: biometricsEnabled ?? this.biometricsEnabled,
     );
   }
 }

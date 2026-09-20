@@ -40,7 +40,7 @@ Email (Enabled):
 - **Email OTP expiration:** `3600`
 - **Email OTP length:** `8`
 
-Google y el resto de providers: **Disabled** hasta tener SHA-1 de Android.
+Google: **Enable** cuando existan el Client ID Web y el secret (sección 2b).
 
 **Save changes.**
 
@@ -62,7 +62,7 @@ Hace falta un proyecto en [Google Cloud Console](https://console.cloud.google.co
 
 - Name: `Docxan Web`
 - Authorized redirect URIs:
-  - `https://<PROJECT_REF>.supabase.co/auth/v1/callback`
+  - `https://rwfdwkdlqkowvptcpyvs.supabase.co/auth/v1/callback`
 - Copia **Client ID** y **Client secret**
 
 **B) Android** — uno por flavor
@@ -72,7 +72,9 @@ Hace falta un proyecto en [Google Cloud Console](https://console.cloud.google.co
 | Docxan Android Dev | `app.docxan.dev` | SHA-1 del keystore **debug** |
 | Docxan Android | `app.docxan` | SHA-1 de **Play App Signing** (y debug si pruebas prod local) |
 
-SHA-1 debug (en tu máquina, no lo pegues en el chat):
+SHA-1 debug: `B7:FA:59:14:D9:3F:4E:32:B3:E4:0E:3A:43:8E:E8:68:A0:90:54:03`
+
+Para regenerarlo:
 
 ```bat
 keytool -list -v -keystore %USERPROFILE%\.android\debug.keystore -alias androiddebugkey -storepass android
@@ -94,7 +96,11 @@ Save.
 En `app/env.json`:
 
 ```json
-"GOOGLE_WEB_CLIENT_ID": "xxxxx.apps.googleusercontent.com"
+{
+  "SUPABASE_URL": "https://rwfdwkdlqkowvptcpyvs.supabase.co",
+  "SUPABASE_ANON_KEY": "TU_ANON_PUBLIC",
+  "GOOGLE_WEB_CLIENT_ID": "xxxxx.apps.googleusercontent.com"
+}
 ```
 
 Es el Client ID **Web**, no el de Android. Relanza **Docxan (dev + Supabase)**.
@@ -125,6 +131,15 @@ flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env.json
 
 O en Cursor: **Docxan (dev + Supabase)**.
 
-## 5. Secrets de R2 (más adelante)
+## 5. Secrets de R2
 
-Los tokens S3 de Cloudflare van en **Edge Function secrets**, no en `env.json`.
+Los tokens S3 de Cloudflare van en **Edge Function secrets**, no en `env.json`:
+
+- `R2_ACCOUNT_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET` (`doxan-backups-dev` o `doxan-backups-prod`)
+
+Despliega `supabase/functions/backup-signed-url` y ejecuta también
+`supabase/migrations/20260919120000_documents_library.sql` (añade
+`deleted_at`, `page_count`, `is_favorite`).

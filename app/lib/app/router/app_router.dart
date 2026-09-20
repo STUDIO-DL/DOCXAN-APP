@@ -31,22 +31,37 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final onOnboarding = loc == AppRoutes.onboarding;
       final onAuth = loc.startsWith('/auth');
       final onLock = loc == AppRoutes.lock;
+      final onPinSetup = loc == AppRoutes.pinSetup;
+      final onLegal = loc.startsWith('/settings/legal');
 
       if (!session.splashDone) {
         return onSplash ? null : AppRoutes.splash;
       }
       if (onSplash) {
         return session.onboardingComplete
-            ? AppRoutes.home
+            ? (session.pinSet ? AppRoutes.home : AppRoutes.pinSetup)
             : AppRoutes.onboarding;
       }
-      if (!session.onboardingComplete && !onOnboarding && !onAuth) {
+      if (!session.onboardingComplete &&
+          !onOnboarding &&
+          !onAuth &&
+          !onLegal) {
         return AppRoutes.onboarding;
       }
-      if (session.pinSet && !session.unlocked && !onLock) {
+      if (session.onboardingComplete &&
+          !session.pinSet &&
+          !onPinSetup &&
+          !onAuth &&
+          !onOnboarding) {
+        return AppRoutes.pinSetup;
+      }
+      if (session.pinSet && !session.unlocked && !onLock && !onPinSetup) {
         return AppRoutes.lock;
       }
       if (onLock && (!session.pinSet || session.unlocked)) {
+        return AppRoutes.home;
+      }
+      if (onPinSetup && session.pinSet && session.unlocked) {
         return AppRoutes.home;
       }
       return null;
@@ -73,6 +88,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LockPage(),
       ),
       GoRoute(
+        path: AppRoutes.pinSetup,
+        builder: (context, state) => PinSetupPage(
+          changing: state.uri.queryParameters['change'] == '1',
+        ),
+      ),
+      GoRoute(
         path: AppRoutes.backup,
         builder: (context, state) => const BackupPage(),
       ),
@@ -80,6 +101,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.document,
         builder: (context, state) => DocumentPage(
           documentId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.legal,
+        builder: (context, state) => LegalPage(
+          kind: state.pathParameters['kind'] ?? 'privacy',
         ),
       ),
       StatefulShellRoute.indexedStack(
@@ -100,6 +127,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.folders,
                 builder: (context, state) => const FoldersPage(),
+                routes: [
+                  GoRoute(
+                    path: ':folderId',
+                    builder: (context, state) => FolderDetailPage(
+                      folderId: state.pathParameters['folderId'] ?? '',
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -107,7 +142,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.scan,
-                builder: (context, state) => const ScanPage(),
+                builder: (context, state) => const CapturePage(),
+                routes: [
+                  GoRoute(
+                    path: 'capture',
+                    builder: (context, state) => const CapturePage(),
+                  ),
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) => const EditPage(),
+                  ),
+                ],
               ),
             ],
           ),

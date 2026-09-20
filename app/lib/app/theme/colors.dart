@@ -8,6 +8,7 @@ abstract final class DocxanColors {
   static const Color hairline = Color(0xFFE5E7EB);
   static const Color chip = Color(0xFFF3F4F6);
   static const Color accent = Color(0xFF16A34A);
+  static const Color accentMuted = Color(0xFFD8F0E2);
   static const Color accentSoft = Color(0xFFDCFCE7);
   static const Color danger = Color(0xFFB42318);
   static const Color ok = Color(0xFF16A34A);

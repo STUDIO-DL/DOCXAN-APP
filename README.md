@@ -44,4 +44,4 @@ flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env.json
 
 ## Stack
 
-Flutter, Riverpod, go_router, Drift (próximo), ML Kit OCR, OpenCV, AES-256-GCM, Supabase, Cloudflare R2.
+Flutter, Riverpod, go_router, Drift, ML Kit OCR, AES-256-GCM, Supabase, Cloudflare R2.

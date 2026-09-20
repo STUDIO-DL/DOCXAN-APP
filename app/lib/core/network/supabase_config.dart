@@ -16,4 +16,6 @@ abstract interface class BackupSignedUrlClient {
   });
 
   Future<Uri> createDownloadUrl({required String r2Key});
+
+  Future<Uri> createDeleteUrl({required String r2Key});
 }

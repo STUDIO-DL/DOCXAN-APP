@@ -1,2 +1,5 @@
-# Placeholder. Sustituir con `supabase init` cuando exista el proyecto.
-project_id = "docxan-pending"
+project_id = "rwfdwkdlqkowvptcpyvs"
+
+[functions.backup-signed-url]
+verify_jwt = false
+

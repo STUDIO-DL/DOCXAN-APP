@@ -48,11 +48,11 @@ class OnboardingPage extends ConsumerWidget {
               spacing: 16,
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () => context.push(AppRoutes.legalPath('privacy')),
                   child: Text(l10n.privacyPolicy),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () => context.push(AppRoutes.legalPath('terms')),
                   child: Text(l10n.termsOfUse),
                 ),
               ],

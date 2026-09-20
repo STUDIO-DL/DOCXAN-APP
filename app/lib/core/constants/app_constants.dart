@@ -14,4 +14,6 @@ abstract final class StorageKeys {
   static const onboardingComplete = 'onboarding_complete';
   static const pinHash = 'pin_hash';
   static const backupEnabled = 'backup_enabled';
+  static const biometricsEnabled = 'biometrics_enabled';
+  static const guestMode = 'guest_mode';
 }

@@ -37,14 +37,15 @@ class MainShell extends StatelessWidget {
                   selected: navigationShell.currentIndex == 1,
                   onTap: () => navigationShell.goBranch(1),
                 ),
-                _ScanFab(
+                _ScanItem(
+                  label: l10n.scan,
                   selected: navigationShell.currentIndex == 2,
                   onTap: () => navigationShell.goBranch(2),
                 ),
                 _NavItem(
                   icon: Icons.search,
                   selectedIcon: Icons.search_rounded,
-                  label: l10n.searchTitle,
+                  label: l10n.searchTab,
                   selected: navigationShell.currentIndex == 3,
                   onTap: () => navigationShell.goBranch(3),
                 ),
@@ -81,7 +82,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? DocxanColors.ink : DocxanColors.inkMuted;
+    final color = selected ? DocxanColors.accent : DocxanColors.inkMuted;
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -105,38 +106,57 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-class _ScanFab extends StatelessWidget {
-  const _ScanFab({required this.selected, required this.onTap});
+class _ScanItem extends StatelessWidget {
+  const _ScanItem({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
+  final String label;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Center(
-        child: GestureDetector(
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: 58,
-            height: 58,
-            decoration: BoxDecoration(
-              color: DocxanColors.accent,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: DocxanColors.accent.withValues(alpha: selected ? 0.45 : 0.28),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: DocxanColors.accent,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: DocxanColors.accent.withValues(
+                      alpha: selected ? 0.45 : 0.28,
+                    ),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.document_scanner_outlined,
+                color: DocxanColors.paper,
+              ),
             ),
-            child: const Icon(
-              Icons.document_scanner_outlined,
-              color: DocxanColors.paper,
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                color: selected ? DocxanColors.accent : DocxanColors.ink,
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
