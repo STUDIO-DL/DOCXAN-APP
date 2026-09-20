@@ -41,11 +41,18 @@ class MainShell extends StatelessWidget {
                   onTap: () => navigationShell.goBranch(2),
                 ),
                 _NavItem(
+                  icon: Icons.search,
+                  selectedIcon: Icons.search,
+                  label: l10n.searchTab,
+                  selected: navigationShell.currentIndex == 3,
+                  onTap: () => navigationShell.goBranch(3),
+                ),
+                _NavItem(
                   icon: Icons.settings_outlined,
                   selectedIcon: Icons.settings_rounded,
                   label: l10n.settings,
-                  selected: navigationShell.currentIndex == 3,
-                  onTap: () => navigationShell.goBranch(3),
+                  selected: navigationShell.currentIndex == 4,
+                  onTap: () => navigationShell.goBranch(4),
                 ),
               ],
             ),
@@ -73,7 +80,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? DoxanColors.ink : DoxanColors.inkMuted;
+    final color = selected ? DoxanColors.accent : DoxanColors.inkMuted;
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -118,15 +125,15 @@ class _ScanItem extends StatelessWidget {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 180),
-              width: 48,
-              height: 48,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
-                color: DoxanColors.ink,
-                borderRadius: BorderRadius.circular(16),
+                color: DoxanColors.accent,
+                shape: BoxShape.circle,
                 boxShadow: selected
                     ? const [
                         BoxShadow(
-                          color: Color(0x33000000),
+                          color: Color(0x331B8A4A),
                           blurRadius: 10,
                           offset: Offset(0, 4),
                         ),
@@ -134,7 +141,7 @@ class _ScanItem extends StatelessWidget {
                     : null,
               ),
               child: const Icon(
-                Icons.document_scanner_outlined,
+                Icons.center_focus_strong_outlined,
                 color: DoxanColors.paper,
               ),
             ),
@@ -144,7 +151,7 @@ class _ScanItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                color: DoxanColors.ink,
+                color: selected ? DoxanColors.accent : DoxanColors.ink,
               ),
             ),
           ],

@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:doxan/app/l10n/app_localizations.dart';
 import 'package:doxan/app/router/routes.dart';
 import 'package:doxan/app/theme/colors.dart';
-import 'package:doxan/core/demo/demo_catalog.dart';
+import 'package:doxan/core/library/library_collections.dart';
+import 'package:doxan/core/library/local_library_catalog.dart';
 import 'package:doxan/core/models/library_models.dart';
+import 'package:doxan/core/models/sync_status.dart';
 import 'package:doxan/core/session/session_controller.dart';
 import 'package:doxan/core/utils/formatters.dart';
+import 'package:doxan/core/widgets/doxan_app_header.dart';
 import 'package:doxan/core/widgets/doxan_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,55 +22,103 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final session = ref.watch(sessionProvider);
+    final library = ref.watch(libraryCatalogProvider);
+    final recents = library.inCollection(LibraryCollections.recent);
     final greetingKey = greetingFor(DateTime.now());
     final greeting = switch (greetingKey) {
       'morning' => l10n.goodMorning,
       'afternoon' => l10n.goodAfternoon,
       _ => l10n.goodEvening,
     };
+    final used = library.activeDocuments.fold<int>(
+      0,
+      (sum, doc) => sum + doc.summary.sizeBytes,
+    );
 
     return Scaffold(
+      backgroundColor: DoxanColors.paper,
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
           children: [
-            DoxanSearchBar(
-              hint: l10n.searchDocuments,
-              onTap: () => context.push(AppRoutes.search),
-            ),
-            const SizedBox(height: 24),
-            Text(greeting, style: Theme.of(context).textTheme.headlineMedium),
-            if (session.isGuest) ...[
-              const SizedBox(height: 12),
-              _GuestBanner(
-                message: l10n.guestBanner,
-                action: l10n.createAccount,
-                onTap: () => context.push(AppRoutes.register),
+            DoxanAppHeader(onProfile: () => context.go(AppRoutes.settings)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              child: DoxanSearchBar(
+                hint: l10n.searchDocuments,
+                onTap: () => context.go(AppRoutes.search),
               ),
-            ],
-            const SizedBox(height: 20),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _StatusChip(
-                  icon: Icons.cloud_off_outlined,
-                  label: session.backupEnabled ? l10n.syncOk : l10n.syncOffline,
-                ),
-                _StatusChip(
-                  icon: Icons.sd_storage_outlined,
-                  label: '${l10n.storageStatus} · 1.1 MB',
-                ),
-              ],
             ),
-            const SizedBox(height: 28),
-            Text(l10n.recents, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            for (final doc in DemoCatalog.documents)
-              _DocumentTile(
-                document: doc,
-                onTap: () => context.push(AppRoutes.documentPath(doc.id)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+              child: Text(
+                greeting,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
+            ),
+            if (session.isGuest)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                child: _GuestBanner(
+                  message: l10n.guestBanner,
+                  action: l10n.createAccount,
+                  onTap: () => context.push(AppRoutes.register),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _StatusChip(
+                    icon: switch (library.aggregateSyncStatus) {
+                      SyncStatus.synced => Icons.cloud_done_outlined,
+                      SyncStatus.uploading => Icons.cloud_sync_outlined,
+                      SyncStatus.pendingUpload => Icons.cloud_upload_outlined,
+                      SyncStatus.failed => Icons.cloud_off_outlined,
+                      SyncStatus.localOnly => Icons.cloud_off_outlined,
+                    },
+                    label: switch (library.aggregateSyncStatus) {
+                      SyncStatus.synced => l10n.syncOk,
+                      SyncStatus.uploading => l10n.syncUploading,
+                      SyncStatus.pendingUpload => l10n.syncPending,
+                      SyncStatus.failed => l10n.syncFailed,
+                      SyncStatus.localOnly => l10n.syncOffline,
+                    },
+                  ),
+                  _StatusChip(
+                    icon: Icons.sd_storage_outlined,
+                    label: '${l10n.storageStatus} · ${formatBytes(used)}',
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 28, 20, 8),
+              child: Text(
+                l10n.recents,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            if (recents.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  l10n.emptyCollection,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              )
+            else
+              for (final doc in recents)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: _DocumentTile(
+                    document: doc.summary,
+                    previewPath: doc.previewPath,
+                    onTap: () => context.push(AppRoutes.documentPath(doc.id)),
+                  ),
+                ),
           ],
         ),
       ),
@@ -131,13 +184,20 @@ class _StatusChip extends StatelessWidget {
 }
 
 class _DocumentTile extends StatelessWidget {
-  const _DocumentTile({required this.document, required this.onTap});
+  const _DocumentTile({
+    required this.document,
+    required this.onTap,
+    this.previewPath,
+  });
 
   final DocumentSummary document;
   final VoidCallback onTap;
+  final String? previewPath;
 
   @override
   Widget build(BuildContext context) {
+    final preview = previewPath;
+    final hasPreview = preview != null && File(preview).existsSync();
     return ListTile(
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
@@ -149,15 +209,15 @@ class _DocumentTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: DoxanColors.hairline),
         ),
-        child: const Icon(Icons.description_outlined, color: DoxanColors.ink),
+        clipBehavior: Clip.antiAlias,
+        child: hasPreview
+            ? Image.file(File(preview), fit: BoxFit.cover)
+            : const Icon(Icons.description_outlined, color: DoxanColors.ink),
       ),
       title: Text(document.name),
       subtitle: Text(
         '${document.format} · ${formatBytes(document.sizeBytes)}',
       ),
-      trailing: document.isDemo
-          ? const Text('Demo', style: TextStyle(color: DoxanColors.inkMuted))
-          : null,
     );
   }
 }

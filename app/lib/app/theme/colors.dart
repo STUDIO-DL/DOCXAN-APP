@@ -9,4 +9,7 @@ abstract final class DoxanColors {
   static const Color chip = Color(0xFFEEEEEC);
   static const Color danger = Color(0xFFB42318);
   static const Color ok = Color(0xFF027A48);
+  static const Color accent = Color(0xFF1B8A4A);
+  static const Color accentMuted = Color(0xFFD8F0E2);
+  static const Color accentSoft = Color(0xFFF3FAF5);
 }

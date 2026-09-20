@@ -78,6 +78,14 @@ abstract final class DoxanTheme {
         ),
       ),
       dividerColor: DoxanColors.hairline,
+      sliderTheme: const SliderThemeData(
+        activeTrackColor: DoxanColors.accent,
+        inactiveTrackColor: DoxanColors.hairline,
+        thumbColor: DoxanColors.paper,
+        overlayColor: Color(0x221B8A4A),
+        trackHeight: 4,
+        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10),
+      ),
     );
   }
 }

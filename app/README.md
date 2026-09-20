@@ -1,4 +1,4 @@
-# App Flutter de Doxan
+# App Flutter de Docxan
 
 Entrypoints:
 

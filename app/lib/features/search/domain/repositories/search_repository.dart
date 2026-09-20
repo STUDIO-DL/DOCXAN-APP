@@ -1,3 +1,7 @@
+import 'package:doxan/core/models/saved_document.dart';
+
+enum SearchScope { all, recents, ocr }
+
 abstract interface class SearchRepository {
-  Future<List<Object>> search(String query);
+  List<SavedDocument> search(String query, {SearchScope scope = SearchScope.all});
 }

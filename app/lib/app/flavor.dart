@@ -1,3 +1,4 @@
+import 'package:doxan/core/config/backend_env.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum AppFlavor { dev, prod }
@@ -6,34 +7,31 @@ class FlavorConfig {
   const FlavorConfig({
     required this.flavor,
     required this.displayName,
-    required this.supabaseUrl,
-    required this.supabaseAnonKey,
-    required this.googleWebClientId,
+    required this.backend,
   });
 
   final AppFlavor flavor;
   final String displayName;
-  final String supabaseUrl;
-  final String supabaseAnonKey;
-  final String googleWebClientId;
+  final BackendEnv backend;
+
+  String get supabaseUrl => backend.supabaseUrl;
+  String get supabaseAnonKey => backend.supabaseAnonKey;
+  String get googleWebClientId => backend.googleWebClientId;
 
   bool get isDev => flavor == AppFlavor.dev;
-  bool get isGoogleConfigured => googleWebClientId.isNotEmpty;
+  bool get isGoogleConfigured => backend.isGoogleConfigured;
+  bool get isR2Configured => backend.isR2Configured;
 
   static const dev = FlavorConfig(
     flavor: AppFlavor.dev,
-    displayName: 'Doxan Dev',
-    supabaseUrl: String.fromEnvironment('SUPABASE_URL'),
-    supabaseAnonKey: String.fromEnvironment('SUPABASE_ANON_KEY'),
-    googleWebClientId: String.fromEnvironment('GOOGLE_WEB_CLIENT_ID'),
+    displayName: 'Docxan Dev',
+    backend: BackendEnv.fromEnvironment,
   );
 
   static const prod = FlavorConfig(
     flavor: AppFlavor.prod,
-    displayName: 'Doxan',
-    supabaseUrl: String.fromEnvironment('SUPABASE_URL'),
-    supabaseAnonKey: String.fromEnvironment('SUPABASE_ANON_KEY'),
-    googleWebClientId: String.fromEnvironment('GOOGLE_WEB_CLIENT_ID'),
+    displayName: 'Docxan',
+    backend: BackendEnv.fromEnvironment,
   );
 }
 

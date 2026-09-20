@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Doxan (dev)",
+      "name": "Docxan (dev)",
       "request": "launch",
       "type": "dart",
       "cwd": "app",
@@ -10,7 +10,7 @@
       "args": ["--flavor", "dev"]
     },
     {
-      "name": "Doxan (dev + Supabase)",
+      "name": "Docxan (dev + Supabase)",
       "request": "launch",
       "type": "dart",
       "cwd": "app",
@@ -23,7 +23,7 @@
       ]
     },
     {
-      "name": "Doxan (prod)",
+      "name": "Docxan (prod)",
       "request": "launch",
       "type": "dart",
       "cwd": "app",

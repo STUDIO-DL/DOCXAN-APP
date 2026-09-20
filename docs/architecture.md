@@ -1,6 +1,16 @@
-# Arquitectura Doxan
+# Arquitectura Docxan
 
 Cliente-servidor **offline-first**. Drift (local) es la fuente de verdad diaria. Supabase guarda metadatos no sensibles. Cloudflare R2 guarda **solo ciphertext**.
+
+Credenciales de la app (solo `app/env.json`, nunca en el repo):
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `GOOGLE_WEB_CLIENT_ID` (opcional, Google Sign-In aparcado)
+
+Los tokens S3 de R2 viven en **Edge Function secrets**, no en el APK.
+
+La sincronización es **manual** (botón Sincronizar). Estados: `local_only`, `pending_upload`, `uploading`, `synced`, `failed`.
 
 ## Capas
 

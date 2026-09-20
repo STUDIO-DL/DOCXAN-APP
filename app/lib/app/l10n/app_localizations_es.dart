@@ -9,7 +9,7 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get appName => 'Doxan';
+  String get appName => 'Docxan';
 
   @override
   String get splashTagline => 'Documentos limpios, en tu móvil.';
@@ -78,6 +78,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get home => 'Inicio';
 
   @override
+  String get searchTab => 'Buscar';
+
+  @override
   String get scanCta => 'Escanear';
 
   @override
@@ -86,6 +89,93 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get scanPlaceholderBody =>
       'La cámara, el recorte y el OCR se conectan en la semana 2. Este visor marca el flujo de captura.';
+
+  @override
+  String get scanDocument => 'Escanear documento';
+
+  @override
+  String get editDocument => 'Editar documento';
+
+  @override
+  String get placeDocumentInFrame => 'Coloca el documento dentro del marco.';
+
+  @override
+  String get flash => 'Flash';
+
+  @override
+  String get gallery => 'Galería';
+
+  @override
+  String get auto => 'Auto';
+
+  @override
+  String get manual => 'Manual';
+
+  @override
+  String get autoDetectionSoon =>
+      'La detección automática estará disponible más adelante. Usa Manual para recortar.';
+
+  @override
+  String get crop => 'Recortar';
+
+  @override
+  String get rotate => 'Rotar';
+
+  @override
+  String get brightness => 'Brillo';
+
+  @override
+  String get contrast => 'Contraste';
+
+  @override
+  String get filters => 'Filtros';
+
+  @override
+  String get filterOriginal => 'Original';
+
+  @override
+  String get filterDocument => 'Documento';
+
+  @override
+  String get filterBw => 'Blanco y negro';
+
+  @override
+  String get filterColor => 'Color';
+
+  @override
+  String get addAnotherPage => 'Añadir otra página';
+
+  @override
+  String get addAnotherPageSubtitle => 'Crear un PDF de varias páginas';
+
+  @override
+  String get saveDocument => 'Guardar documento';
+
+  @override
+  String get savingDocument => 'Guardando documento…';
+
+  @override
+  String get recognizingText => 'Reconociendo texto…';
+
+  @override
+  String get cameraUnavailable =>
+      'No se pudo abrir la cámara. Comprueba el permiso.';
+
+  @override
+  String get cameraPermissionDenied =>
+      'Docxan necesita la cámara para escanear.';
+
+  @override
+  String get saveFailed => 'No se pudo guardar el documento.';
+
+  @override
+  String get documentNotFound => 'Documento no encontrado';
+
+  @override
+  String get noPagesToSave => 'Añade al menos una página para guardar.';
+
+  @override
+  String get ocrUnavailable => 'El texto se guardó vacío. El PDF está listo.';
 
   @override
   String get newFolder => 'Nueva carpeta';
@@ -207,7 +297,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sendReset => 'Enviar enlace';
 
   @override
-  String get lockTitle => 'Desbloquear Doxan';
+  String get lockTitle => 'Desbloquear Docxan';
 
   @override
   String get lockSubtitle => 'Introduce tu PIN de 6 dígitos';
@@ -242,4 +332,240 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get trash => 'Papelera';
+
+  @override
+  String get foldersSubtitle =>
+      'Organiza tus documentos fácilmente. Accede a tus carpetas y encuentra lo que necesitas.';
+
+  @override
+  String get searchFolders => 'Buscar carpetas...';
+
+  @override
+  String get allFolders => 'Todas las carpetas';
+
+  @override
+  String get myFiles => 'Mis archivos';
+
+  @override
+  String get favorites => 'Favoritos';
+
+  @override
+  String get quickAccess => 'Accesos rápidos';
+
+  @override
+  String get otherFolder => 'Otros';
+
+  @override
+  String get pinSetupTitle => 'Crea tu PIN';
+
+  @override
+  String get pinSetupSubtitle =>
+      'Elige 6 dígitos para proteger Docxan en este dispositivo.';
+
+  @override
+  String get pinConfirmTitle => 'Repite el PIN';
+
+  @override
+  String get pinConfirmSubtitle =>
+      'Vuelve a introducir el mismo PIN para confirmarlo.';
+
+  @override
+  String get pinMismatch => 'Los PIN no coinciden. Inténtalo de nuevo.';
+
+  @override
+  String get pinWrong => 'PIN incorrecto';
+
+  @override
+  String get pinCurrentTitle => 'PIN actual';
+
+  @override
+  String get changePin => 'Cambiar PIN';
+
+  @override
+  String get pinChanged => 'PIN actualizado';
+
+  @override
+  String get saveChanges => 'Guardar cambios';
+
+  @override
+  String get ocrSaved => 'Texto OCR guardado';
+
+  @override
+  String get exportPdf => 'PDF';
+
+  @override
+  String get exportJpg => 'JPG';
+
+  @override
+  String get exportPng => 'PNG';
+
+  @override
+  String get exportWord => 'Word';
+
+  @override
+  String get download => 'Descargar';
+
+  @override
+  String get syncComingSoon =>
+      'La sincronización estará disponible más adelante.';
+
+  @override
+  String get syncAction => 'Sincronizar';
+
+  @override
+  String get language => 'Idioma';
+
+  @override
+  String get spanish => 'Español';
+
+  @override
+  String get appearance => 'Apariencia';
+
+  @override
+  String get theme => 'Tema';
+
+  @override
+  String get lightTheme => 'Claro';
+
+  @override
+  String get usedStorage => 'Usado por Docxan';
+
+  @override
+  String get deviceStorage => 'Almacenamiento del dispositivo';
+
+  @override
+  String storageUsedOf(String used, String total) {
+    return '$used de $total';
+  }
+
+  @override
+  String get cleanCache => 'Vaciar caché de escaneo';
+
+  @override
+  String get cacheCleaned => 'Caché vaciada';
+
+  @override
+  String get deleteLocalDocuments => 'Eliminar documentos locales';
+
+  @override
+  String get documentsDeleted => 'Documentos locales eliminados';
+
+  @override
+  String get folderName => 'Nombre de la carpeta';
+
+  @override
+  String get documentName => 'Nombre del documento';
+
+  @override
+  String get confirmDelete => '¿Eliminar?';
+
+  @override
+  String get confirmDeleteFolder =>
+      'La carpeta se elimina y sus documentos pasan a Mis archivos.';
+
+  @override
+  String get confirmDeleteDocument =>
+      'El documento irá a la papelera durante 30 días.';
+
+  @override
+  String get confirmDeleteAll =>
+      'Se eliminarán de forma permanente todos los documentos locales.';
+
+  @override
+  String get restore => 'Restaurar';
+
+  @override
+  String get deleteForever => 'Eliminar definitivamente';
+
+  @override
+  String get emptyCollection => 'No hay documentos aquí';
+
+  @override
+  String get favorite => 'Favorito';
+
+  @override
+  String get unfavorite => 'Quitar de favoritos';
+
+  @override
+  String get moveToFolder => 'Mover a carpeta';
+
+  @override
+  String get noFolder => 'Mis archivos';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get confirm => 'Confirmar';
+
+  @override
+  String get profile => 'Perfil';
+
+  @override
+  String get filterOcr => 'Con texto OCR';
+
+  @override
+  String get unlockWithBiometrics => 'Desbloquear con huella o Face unlock';
+
+  @override
+  String get biometricsUnavailable =>
+      'La biometría no está disponible en este dispositivo.';
+
+  @override
+  String get legal => 'Legal';
+
+  @override
+  String get createFolderHint => 'Por ejemplo, Facturas';
+
+  @override
+  String get unknownStorage => 'Desconocido';
+
+  @override
+  String get scanTipLighting => 'Buena iluminación';
+
+  @override
+  String get scanTipFrame => 'Mantén el documento dentro del marco';
+
+  @override
+  String get scanTipShadows => 'Evita sombras sobre el papel';
+
+  @override
+  String get scanTipParallel => 'Teléfono paralelo al documento';
+
+  @override
+  String get scanTipBackground => 'Usa un fondo liso';
+
+  @override
+  String get documentDetected => 'Documento detectado';
+
+  @override
+  String get syncNeedAccount => 'Crea una cuenta para sincronizar.';
+
+  @override
+  String get syncNotConfigured =>
+      'Añade las claves de Supabase o R2 en env.json.';
+
+  @override
+  String get syncComplete => 'Sincronización lista.';
+
+  @override
+  String get syncFailedMessage => 'No se pudo completar la sincronización.';
+
+  @override
+  String get syncNothingPending => 'Nada pendiente.';
+
+  @override
+  String get syncInProgress => 'Sincronizando…';
+
+  @override
+  String get restoreComplete => 'Restauración lista.';
+
+  @override
+  String get restoreFailed => 'No se pudo restaurar el backup.';
+
+  @override
+  String get syncUploading => 'Subiendo';
+
+  @override
+  String get syncFailed => 'Error de sync';
 }

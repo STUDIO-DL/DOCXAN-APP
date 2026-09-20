@@ -15,7 +15,7 @@ class GoogleAuthDatasource {
 
     final googleSignIn = GoogleSignIn(
       serverClientId: webClientId,
-      scopes: const ['email', 'profile'],
+      scopes: const ['email', 'profile', 'openid'],
     );
     final account = await googleSignIn.signIn();
     if (account == null) {

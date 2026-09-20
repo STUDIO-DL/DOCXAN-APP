@@ -1,3 +1,5 @@
+import 'package:doxan/core/models/saved_document.dart';
+
 abstract interface class LibraryRepository {
-  Future<List<Object>> recents();
+  Future<List<SavedDocument>> recents();
 }

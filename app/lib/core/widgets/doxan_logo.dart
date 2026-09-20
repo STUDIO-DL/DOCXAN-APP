@@ -16,12 +16,12 @@ class DoxanLogo extends StatelessWidget {
           'assets/images/logo.png',
           height: size,
           filterQuality: FilterQuality.high,
-          semanticLabel: 'Doxan',
+          semanticLabel: 'Docxan',
         ),
         if (showWordmark) ...[
           const SizedBox(height: 8),
           Text(
-            'Doxan',
+            'Docxan',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w700,
               letterSpacing: -0.8,
