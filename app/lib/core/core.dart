@@ -30,6 +30,7 @@ export 'models/sync_status.dart';
 export 'models/user_settings.dart';
 export 'network/docxan_supabase.dart';
 export 'network/supabase_config.dart';
+export 'notifications/push_notifications.dart';
 export 'ocr/ocr_engine.dart';
 export 'permissions/permission_service.dart';
 export 'security/biometric_service.dart';
