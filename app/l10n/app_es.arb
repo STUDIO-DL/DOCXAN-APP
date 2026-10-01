@@ -176,6 +176,8 @@
   "syncAction": "Sincronizar",
   "language": "Idioma",
   "spanish": "Español",
+  "english": "English",
+  "french": "Français",
   "appearance": "Apariencia",
   "theme": "Tema",
   "lightTheme": "Claro",
@@ -233,5 +235,25 @@
   "restoreComplete": "Restauración lista.",
   "restoreFailed": "No se pudo restaurar el backup.",
   "syncUploading": "Subiendo",
-  "syncFailed": "Error de sync"
+  "syncFailed": "Error de sync",
+  "relativeNow": "Ahora",
+  "relativeMinutes": "Hace {count} min",
+  "@relativeMinutes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "relativeHours": "Hace {count} h",
+  "@relativeHours": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "relativeYesterday": "Ayer",
+  "relativeDays": "Hace {count} d",
+  "@relativeDays": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  }
 }

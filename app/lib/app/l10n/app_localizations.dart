@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +94,11 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('es')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+  ];
 
   /// No description provided for @appName.
   ///
@@ -1072,6 +1078,18 @@ abstract class AppLocalizations {
   /// **'Español'**
   String get spanish;
 
+  /// No description provided for @english.
+  ///
+  /// In es, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @french.
+  ///
+  /// In es, this message translates to:
+  /// **'Français'**
+  String get french;
+
   /// No description provided for @appearance.
   ///
   /// In es, this message translates to:
@@ -1347,6 +1365,36 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Error de sync'**
   String get syncFailed;
+
+  /// No description provided for @relativeNow.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora'**
+  String get relativeNow;
+
+  /// No description provided for @relativeMinutes.
+  ///
+  /// In es, this message translates to:
+  /// **'Hace {count} min'**
+  String relativeMinutes(int count);
+
+  /// No description provided for @relativeHours.
+  ///
+  /// In es, this message translates to:
+  /// **'Hace {count} h'**
+  String relativeHours(int count);
+
+  /// No description provided for @relativeYesterday.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayer'**
+  String get relativeYesterday;
+
+  /// No description provided for @relativeDays.
+  ///
+  /// In es, this message translates to:
+  /// **'Hace {count} d'**
+  String relativeDays(int count);
 }
 
 class _AppLocalizationsDelegate
@@ -1360,7 +1408,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['es'].contains(locale.languageCode);
+      <String>['en', 'es', 'fr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1369,8 +1417,12 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
   }
 
   throw FlutterError(
@@ -1380,3 +1432,4 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     'that was used.',
   );
 }
+
