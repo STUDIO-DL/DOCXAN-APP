@@ -255,5 +255,18 @@
     "placeholders": {
       "count": { "type": "int" }
     }
-  }
+  },
+  "documentNamed": "Documento {date}",
+  "@documentNamed": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "retakePage": "Retomar",
+  "compressionSmall": "Pequeño",
+  "compressionHigh": "Alta calidad",
+  "darkTheme": "Oscuro",
+  "folderPersonal": "Personal",
+  "folderUniversity": "Universidad",
+  "folderWork": "Trabajo"
 }

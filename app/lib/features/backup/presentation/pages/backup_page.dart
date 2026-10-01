@@ -37,7 +37,7 @@ class _BackupPageState extends ConsumerState<BackupPage> {
     if (!mounted) return;
     setState(() => _busy = false);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(report.message ?? l10n.syncComplete)),
+      SnackBar(content: Text(localizedSyncReport(l10n, report))),
     );
   }
 
@@ -58,12 +58,12 @@ class _BackupPageState extends ConsumerState<BackupPage> {
       final report = await ref.read(syncManagerProvider).restoreFromCloud(pin: pin);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(report.message ?? l10n.restoreComplete)),
+        SnackBar(content: Text(localizedSyncReport(l10n, report))),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString())),
+        SnackBar(content: Text(l10n.restoreFailed)),
       );
     } finally {
       if (mounted) setState(() => _busy = false);

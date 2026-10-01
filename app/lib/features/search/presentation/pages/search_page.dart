@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/constants/app_constants.dart';
+import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/models/saved_document.dart';
 import 'package:docxan/core/utils/formatters.dart';
@@ -11,6 +13,7 @@ import 'package:docxan/core/widgets/doxan_empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum _SearchFilter { all, recents, ocr, pdf }
 
@@ -26,6 +29,32 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   String _query = '';
   _SearchFilter _filter = _SearchFilter.all;
   List<SavedDocument> _results = const [];
+  List<String> _recent = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecent();
+  }
+
+  Future<void> _loadRecent() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final stored = prefs.getStringList(StorageKeys.recentSearches) ?? [];
+      if (mounted) setState(() => _recent = stored);
+    } catch (_) {}
+  }
+
+  Future<void> _rememberQuery(String query) async {
+    final q = query.trim();
+    if (q.isEmpty) return;
+    final next = [q, ..._recent.where((item) => item != q)].take(8).toList();
+    setState(() => _recent = next);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(StorageKeys.recentSearches, next);
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
@@ -81,6 +110,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   _query = value;
                   _runSearch();
                 },
+                onSubmitted: (value) => _rememberQuery(value),
               ),
             ),
             Padding(
@@ -125,7 +155,27 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             ),
             Expanded(
               child: _query.isEmpty && _filter == _SearchFilter.all
-                  ? const SizedBox.shrink()
+                  ? ListView(
+                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                      children: [
+                        if (_recent.isNotEmpty)
+                          Text(
+                            l10n.recentSearches,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        for (final item in _recent)
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(Icons.history),
+                            title: Text(item),
+                            onTap: () {
+                              _controller.text = item;
+                              _query = item;
+                              _runSearch();
+                            },
+                          ),
+                      ],
+                    )
                   : _results.isEmpty
                   ? DoxanEmptyState(
                       icon: Icons.search_off,
@@ -139,7 +189,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                             leading: _Thumb(path: doc.previewPath),
                             title: Text(doc.summary.name),
                             subtitle: Text(
-                              '${doc.summary.folderName} · ${formatBytes(doc.summary.sizeBytes)}',
+                              '${localizedFolderName(l10n, folderId: doc.summary.folderId, storedName: doc.summary.folderName)} · ${formatBytes(doc.summary.sizeBytes)}',
                             ),
                             onTap: () =>
                                 context.push(AppRoutes.documentPath(doc.id)),

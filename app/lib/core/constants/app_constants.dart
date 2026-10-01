@@ -17,4 +17,6 @@ abstract final class StorageKeys {
   static const biometricsEnabled = 'biometrics_enabled';
   static const guestMode = 'guest_mode';
   static const appLocale = 'app_locale';
+  static const appTheme = 'app_theme';
+  static const recentSearches = 'recent_searches';
 }

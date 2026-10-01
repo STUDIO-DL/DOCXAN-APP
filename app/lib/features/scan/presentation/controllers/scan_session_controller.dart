@@ -13,8 +13,52 @@ class ScanSessionController extends Notifier<ScanSessionState> {
       crop: crop ?? CropQuad.inset,
       filter: filter ?? ScanFilterKind.document,
     );
+    if (state.retaking && state.pages.isNotEmpty) {
+      final index = state.currentIndex.clamp(0, state.pages.length - 1);
+      final pages = [...state.pages];
+      final previous = pages[index];
+      pages[index] = previous.copyWith(
+        path: path,
+        crop: crop ?? CropQuad.inset,
+        rotationTurns: 0,
+        filter: filter ?? previous.filter,
+        brightness: previous.brightness,
+        contrast: previous.contrast,
+      );
+      state = state.copyWith(
+        pages: pages,
+        currentIndex: index,
+        retaking: false,
+      );
+      return;
+    }
     final pages = [...state.pages, page];
     state = state.copyWith(pages: pages, currentIndex: pages.length - 1);
+  }
+
+  void beginRetake() {
+    if (state.pages.isEmpty) return;
+    state = state.copyWith(retaking: true);
+  }
+
+  void cancelRetake() {
+    if (state.retaking) {
+      state = state.copyWith(retaking: false);
+    }
+  }
+
+  void movePage(int from, int to) {
+    if (from < 0 ||
+        to < 0 ||
+        from >= state.pages.length ||
+        to >= state.pages.length ||
+        from == to) {
+      return;
+    }
+    final pages = [...state.pages];
+    final page = pages.removeAt(from);
+    pages.insert(to, page);
+    state = state.copyWith(pages: pages, currentIndex: to);
   }
 
   void removePageAt(int index) {

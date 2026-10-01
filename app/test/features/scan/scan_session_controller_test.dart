@@ -28,6 +28,24 @@ void main() {
     controller.removePageAt(0);
     expect(container.read(scanSessionProvider).pageCount, 1);
 
+    controller.addPage('/tmp/c.jpg');
+    controller.addPage('/tmp/d.jpg');
+    controller.setCurrentIndex(1);
+    controller.beginRetake();
+    controller.addPage('/tmp/retake.jpg');
+    expect(container.read(scanSessionProvider).currentPage?.path, '/tmp/retake.jpg');
+    expect(container.read(scanSessionProvider).retaking, isFalse);
+
+    controller.movePage(0, 2);
+    expect(
+      container.read(scanSessionProvider).pages.map((page) => page.path).toList(),
+      ['/tmp/retake.jpg', '/tmp/d.jpg', '/tmp/b.jpg'],
+    );
+
+    controller.beginRetake();
+    controller.cancelRetake();
+    expect(container.read(scanSessionProvider).retaking, isFalse);
+
     controller.clear();
     expect(container.read(scanSessionProvider).pageCount, 0);
   });

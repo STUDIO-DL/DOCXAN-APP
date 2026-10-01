@@ -2,12 +2,15 @@ import 'package:docxan/app/flavor.dart';
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/data/user_settings_repository.dart';
+import 'package:docxan/core/imaging/compression_profile.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/locale/app_locales.dart';
 import 'package:docxan/core/security/biometric_service.dart';
 import 'package:docxan/core/session/session_controller.dart';
 import 'package:docxan/core/storage/storage_stats.dart';
 import 'package:docxan/core/sync/sync_manager.dart';
+import 'package:docxan/core/theme/app_theme_controller.dart';
 import 'package:docxan/core/utils/formatters.dart';
 import 'package:docxan/core/widgets/doxan_app_header.dart';
 import 'package:docxan/core/widgets/language_picker.dart';
@@ -25,11 +28,20 @@ class SettingsPage extends ConsumerStatefulWidget {
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   StorageStats? _stats;
+  String _compression = CompressionProfile.balanced.id;
 
   @override
   void initState() {
     super.initState();
     _reloadStats();
+    _loadCompression();
+  }
+
+  Future<void> _loadCompression() async {
+    final settings = await ref.read(userSettingsRepositoryProvider).load();
+    if (mounted) {
+      setState(() => _compression = settings.compressionProfile);
+    }
   }
 
   Future<void> _reloadStats() async {
@@ -99,7 +111,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             ),
             ListTile(
               title: Text(l10n.theme),
-              subtitle: Text(l10n.lightTheme),
+              subtitle: Text(
+                ref.watch(appThemeModeProvider) == ThemeMode.dark
+                    ? l10n.darkTheme
+                    : l10n.lightTheme,
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _pickTheme(l10n),
+            ),
+            ListTile(
+              title: Text(l10n.compression),
+              subtitle: Text(_compressionLabel(l10n, _compression)),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _pickCompression(l10n),
             ),
             const Divider(),
             ListTile(
@@ -170,11 +194,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ..showSnackBar(SnackBar(content: Text(l10n.syncInProgress)));
     final report = await ref.read(syncManagerProvider).synchronize();
     if (!mounted) return;
-    final message = switch (report.status) {
-      SyncRunStatus.skipped => report.message ?? l10n.syncNeedAccount,
-      SyncRunStatus.failed => report.message ?? l10n.syncFailedMessage,
-      _ => report.message ?? l10n.syncComplete,
-    };
+    final message = localizedSyncReport(l10n, report);
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
@@ -224,5 +244,60 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(l10n.documentsDeleted)));
+  }
+
+  String _compressionLabel(AppLocalizations l10n, String id) {
+    return switch (id) {
+      'small' => l10n.compressionSmall,
+      'high' => l10n.compressionHigh,
+      _ => l10n.compressionBalanced,
+    };
+  }
+
+  Future<void> _pickTheme(AppLocalizations l10n) async {
+    final selected = await showModalBottomSheet<ThemeMode>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(l10n.lightTheme),
+              onTap: () => Navigator.pop(context, ThemeMode.light),
+            ),
+            ListTile(
+              title: Text(l10n.darkTheme),
+              onTap: () => Navigator.pop(context, ThemeMode.dark),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (selected == null) return;
+    await ref.read(appThemeModeProvider.notifier).setMode(selected);
+  }
+
+  Future<void> _pickCompression(AppLocalizations l10n) async {
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final profile in CompressionProfile.values)
+              ListTile(
+                title: Text(_compressionLabel(l10n, profile.id)),
+                onTap: () => Navigator.pop(context, profile.id),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (selected == null) return;
+    final settings = await ref.read(userSettingsRepositoryProvider).load();
+    await ref.read(userSettingsRepositoryProvider).save(
+      settings.copyWith(compressionProfile: selected),
+    );
+    if (mounted) setState(() => _compression = selected);
   }
 }

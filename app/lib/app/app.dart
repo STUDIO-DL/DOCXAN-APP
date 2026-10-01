@@ -5,6 +5,7 @@ import 'package:docxan/app/theme/app_theme.dart';
 import 'package:docxan/core/locale/app_locale_controller.dart';
 import 'package:docxan/core/locale/app_locales.dart';
 import 'package:docxan/core/session/session_controller.dart';
+import 'package:docxan/core/theme/app_theme_controller.dart';
 import 'package:docxan/features/auth/presentation/controllers/auth_session_binder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +18,7 @@ class DocxanApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
     final flavor = ref.watch(flavorConfigProvider);
     final overrideCode = ref.watch(appLocaleProvider);
+    final themeMode = ref.watch(appThemeModeProvider);
 
     return AuthSessionBinder(
       child: _LockOnBackground(
@@ -24,6 +26,8 @@ class DocxanApp extends ConsumerWidget {
           title: flavor.displayName,
           debugShowCheckedModeBanner: flavor.isDev,
           theme: DocxanTheme.light(),
+          darkTheme: DocxanTheme.dark(),
+          themeMode: themeMode,
           routerConfig: router,
           locale: overrideCode == null ? null : Locale(overrideCode),
           supportedLocales: AppLocalizations.supportedLocales,

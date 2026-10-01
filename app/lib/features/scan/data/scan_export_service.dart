@@ -1,4 +1,5 @@
 import 'package:docxan/core/extensions/date_time_x.dart';
+import 'package:docxan/core/imaging/compression_profile.dart';
 import 'package:docxan/core/imaging/page_processor.dart';
 import 'package:docxan/core/imaging/pdf_builder.dart';
 import 'package:docxan/core/library/library_ids.dart';
@@ -25,11 +26,14 @@ class ScanExportService {
   Future<DocumentDraft> export(
     ScanSessionState session, {
     SaveProgress? onProgress,
+    String? documentName,
+    CompressionProfile? profile,
   }) async {
     if (session.pages.isEmpty) {
       throw StateError('empty_session');
     }
 
+    final quality = profile ?? CompressionProfile.balanced;
     final pageJpegs = <Uint8List>[];
     final ocrParts = <String>[];
 
@@ -37,7 +41,10 @@ class ScanExportService {
       onProgress?.call('process');
       final jpeg = await compute(
         processScanPageIsolate,
-        session.pages[i].toProcessMap(),
+        session.pages[i].toProcessMap(
+          maxSide: quality.maxSide,
+          maxBytes: quality.maxBytes,
+        ),
       );
       pageJpegs.add(jpeg);
 
@@ -58,7 +65,7 @@ class ScanExportService {
 
     return DocumentDraft(
       id: LibraryIds.newId(),
-      name: 'Documento ${now.toShortDate()}',
+      name: documentName ?? 'Documento ${now.toShortDate()}',
       pdfBytes: pdfBytes,
       previewJpeg: pageJpegs.first,
       ocrText: ocrParts.where((part) => part.trim().isNotEmpty).join('\n\n'),

@@ -675,4 +675,29 @@ class AppLocalizationsEn extends AppLocalizations {
     return '$count d ago';
   }
 
+  @override
+  String documentNamed(String date) {
+    return 'Document $date';
+  }
+
+  @override
+  String get retakePage => 'Retake';
+
+  @override
+  String get compressionSmall => 'Small';
+
+  @override
+  String get compressionHigh => 'High quality';
+
+  @override
+  String get darkTheme => 'Dark';
+
+  @override
+  String get folderPersonal => 'Personal';
+
+  @override
+  String get folderUniversity => 'University';
+
+  @override
+  String get folderWork => 'Work';
 }

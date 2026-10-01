@@ -43,4 +43,36 @@ void main() {
     );
     expect(out.getPixel(0, 0).r, greaterThan(120));
   });
+
+  test('documento y B&N blanquean el fondo', () {
+    final source = img.Image(width: 48, height: 48);
+    for (final pixel in source) {
+      pixel
+        ..r = 186
+        ..g = 176
+        ..b = 150;
+    }
+    for (var y = 18; y < 22; y++) {
+      for (var x = 8; x < 40; x++) {
+        source.setPixelRgb(x, y, 30, 30, 30);
+      }
+    }
+    final document = applyScanFilter(
+      source,
+      filter: ScanFilterKind.document,
+      brightness: 50,
+      contrast: 50,
+    );
+    expect(document.getPixel(2, 2).r, greaterThan(200));
+    expect(document.getPixel(2, 2).r, document.getPixel(2, 2).g);
+
+    final bw = applyScanFilter(
+      source,
+      filter: ScanFilterKind.bw,
+      brightness: 50,
+      contrast: 50,
+    );
+    expect(bw.getPixel(2, 2).r, 255);
+    expect(bw.getPixel(20, 20).r, 0);
+  });
 }

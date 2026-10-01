@@ -13,7 +13,12 @@ Future<Uint8List> buildPdfIsolate(List<Uint8List> pages) async {
         pageFormat: PdfPageFormat.a4,
         margin: pw.EdgeInsets.zero,
         build: (context) {
-          return pw.Center(child: pw.Image(image, fit: pw.BoxFit.contain));
+          return pw.Image(
+            image,
+            fit: pw.BoxFit.cover,
+            width: PdfPageFormat.a4.width,
+            height: PdfPageFormat.a4.height,
+          );
         },
       ),
     );

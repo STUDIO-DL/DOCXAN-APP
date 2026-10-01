@@ -1,9 +1,15 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/data/user_settings_repository.dart';
+import 'package:docxan/core/extensions/date_time_x.dart';
+import 'package:docxan/core/imaging/compression_profile.dart';
 import 'package:docxan/core/imaging/crop_quad.dart';
+import 'package:docxan/core/imaging/page_processor.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/logging/app_logger.dart';
 import 'package:docxan/features/scan/data/scan_export_service.dart';
@@ -11,6 +17,7 @@ import 'package:docxan/features/scan/presentation/controllers/scan_session_contr
 import 'package:docxan/features/scan/presentation/states/scan_session_state.dart';
 import 'package:docxan/features/scan/presentation/widgets/crop_overlay.dart';
 import 'package:docxan/features/scan/presentation/widgets/preview_matrix.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -54,8 +61,11 @@ class _EditPageState extends ConsumerState<EditPage> {
       _savePhase = l10n.savingDocument;
     });
     try {
+      final settings = await ref.read(userSettingsRepositoryProvider).load();
       final draft = await ref.read(scanExportProvider).export(
         session,
+        documentName: l10n.documentNamed(DateTime.now().toShortDate()),
+        profile: CompressionProfile.of(settings.compressionProfile),
         onProgress: (phase) {
           if (!mounted) return;
           setState(() {
@@ -130,7 +140,54 @@ class _EditPageState extends ConsumerState<EditPage> {
                         aspectRatio: 4 / 3.1,
                         child: page == null
                             ? const SizedBox.shrink()
-                            : _PagePreview(page: page),
+                            : _PagePreview(
+                                page: page,
+                                showCrop: _tool == _EditorTool.crop,
+                              ),
+                      ),
+                      if (session.pages.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        _PageStrip(
+                          pages: session.pages,
+                          currentIndex: session.currentIndex,
+                          onSelect: controller.setCurrentIndex,
+                          onReorder: controller.movePage,
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: page == null
+                                  ? null
+                                  : () {
+                                      controller.beginRetake();
+                                      context.go(AppRoutes.scanCapture);
+                                    },
+                              icon: const Icon(Icons.camera_alt_outlined),
+                              label: Text(l10n.retakePage),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            tooltip: l10n.delete,
+                            onPressed: page == null
+                                ? null
+                                : () {
+                                    controller.removePageAt(
+                                      session.currentIndex,
+                                    );
+                                    if (ref
+                                        .read(scanSessionProvider)
+                                        .pages
+                                        .isEmpty) {
+                                      context.go(AppRoutes.scanCapture);
+                                    }
+                                  },
+                            icon: const Icon(Icons.delete_outline),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -281,10 +338,72 @@ class _EditPageState extends ConsumerState<EditPage> {
   }
 }
 
+class _PageStrip extends StatelessWidget {
+  const _PageStrip({
+    required this.pages,
+    required this.currentIndex,
+    required this.onSelect,
+    required this.onReorder,
+  });
+
+  final List<ScanSessionPage> pages;
+  final int currentIndex;
+  final ValueChanged<int> onSelect;
+  final void Function(int from, int to) onReorder;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 88,
+      child: ReorderableListView.builder(
+        scrollDirection: Axis.horizontal,
+        buildDefaultDragHandles: false,
+        onReorder: (from, to) {
+          final dest = to > from ? to - 1 : to;
+          onReorder(from, dest);
+        },
+        itemCount: pages.length,
+        itemBuilder: (context, index) {
+          final selected = index == currentIndex;
+          return ReorderableDelayedDragStartListener(
+            key: ValueKey(pages[index].id),
+            index: index,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: () => onSelect(index),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 160),
+                  width: 64,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: selected
+                          ? DocxanColors.accent
+                          : DocxanColors.hairline,
+                      width: selected ? 2 : 1,
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.file(
+                    File(pages[index].path),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class _PagePreview extends ConsumerWidget {
-  const _PagePreview({required this.page});
+  const _PagePreview({required this.page, required this.showCrop});
 
   final ScanSessionPage page;
+  final bool showCrop;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -297,8 +416,12 @@ class _PagePreview extends ConsumerWidget {
       child: FittedBox(
         fit: BoxFit.contain,
         child: RotatedBox(
-          quarterTurns: page.rotationTurns,
-          child: _SizedPreview(file: file, page: page),
+          quarterTurns: showCrop ? page.rotationTurns : 0,
+          child: _SizedPreview(
+            file: file,
+            page: page,
+            showCrop: showCrop,
+          ),
         ),
       ),
     );
@@ -306,10 +429,15 @@ class _PagePreview extends ConsumerWidget {
 }
 
 class _SizedPreview extends ConsumerStatefulWidget {
-  const _SizedPreview({required this.file, required this.page});
+  const _SizedPreview({
+    required this.file,
+    required this.page,
+    required this.showCrop,
+  });
 
   final File file;
   final ScanSessionPage page;
+  final bool showCrop;
 
   @override
   ConsumerState<_SizedPreview> createState() => _SizedPreviewState();
@@ -317,19 +445,59 @@ class _SizedPreview extends ConsumerStatefulWidget {
 
 class _SizedPreviewState extends ConsumerState<_SizedPreview> {
   Size? _imageSize;
+  Uint8List? _processed;
+  Object? _job;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _resolveSize();
+    _scheduleProcess();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant _SizedPreview oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.file.path != widget.file.path) {
+      _processed = null;
       _resolveSize();
     }
+    if (oldWidget.file.path != widget.file.path ||
+        oldWidget.page.crop != widget.page.crop ||
+        oldWidget.page.filter != widget.page.filter ||
+        oldWidget.page.brightness != widget.page.brightness ||
+        oldWidget.page.contrast != widget.page.contrast ||
+        oldWidget.page.rotationTurns != widget.page.rotationTurns ||
+        oldWidget.showCrop != widget.showCrop) {
+      _scheduleProcess();
+    }
+  }
+
+  void _scheduleProcess() {
+    if (widget.showCrop) return;
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 120), _process);
+  }
+
+  Future<void> _process() async {
+    if (widget.showCrop) return;
+    final job = Object();
+    _job = job;
+    try {
+      final bytes = await compute(
+        processScanPageIsolate,
+        widget.page.toProcessMap(maxSide: 960, maxBytes: 280 * 1024),
+      );
+      if (!mounted || _job != job) return;
+      setState(() => _processed = bytes);
+    } catch (_) {}
   }
 
   Future<void> _resolveSize() async {
@@ -354,6 +522,10 @@ class _SizedPreviewState extends ConsumerState<_SizedPreview> {
   Widget build(BuildContext context) {
     final size = _imageSize ?? const Size(3, 4);
     final page = widget.page;
+    final processed = _processed;
+    if (!widget.showCrop && processed != null) {
+      return Image.memory(processed, fit: BoxFit.contain);
+    }
     return SizedBox(
       width: size.width,
       height: size.height,
@@ -368,12 +540,13 @@ class _SizedPreviewState extends ConsumerState<_SizedPreview> {
             ),
             child: Image.file(widget.file, fit: BoxFit.fill),
           ),
-          CropOverlay(
-            quad: page.crop,
-            onChanged: (quad) {
-              ref.read(scanSessionProvider.notifier).setCrop(quad);
-            },
-          ),
+          if (widget.showCrop)
+            CropOverlay(
+              quad: page.crop,
+              onChanged: (quad) {
+                ref.read(scanSessionProvider.notifier).setCrop(quad);
+              },
+            ),
         ],
       ),
     );

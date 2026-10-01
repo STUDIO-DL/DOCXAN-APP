@@ -39,7 +39,10 @@ class ScanSessionPage {
     );
   }
 
-  Map<String, Object?> toProcessMap() => {
+  Map<String, Object?> toProcessMap({
+    int? maxSide,
+    int? maxBytes,
+  }) => {
     'path': path,
     'tlX': crop.tlX,
     'tlY': crop.tlY,
@@ -53,6 +56,8 @@ class ScanSessionPage {
     'filter': filter.name,
     'brightness': brightness,
     'contrast': contrast,
+    if (maxSide != null) 'maxSide': maxSide,
+    if (maxBytes != null) 'maxBytes': maxBytes,
   };
 }
 
@@ -64,12 +69,14 @@ class ScanSessionState {
     this.currentIndex = 0,
     this.captureMode = CaptureMode.auto,
     this.flashOn = false,
+    this.retaking = false,
   });
 
   final List<ScanSessionPage> pages;
   final int currentIndex;
   final CaptureMode captureMode;
   final bool flashOn;
+  final bool retaking;
 
   int get pageCount => pages.length;
 
@@ -84,12 +91,14 @@ class ScanSessionState {
     int? currentIndex,
     CaptureMode? captureMode,
     bool? flashOn,
+    bool? retaking,
   }) {
     return ScanSessionState(
       pages: pages ?? this.pages,
       currentIndex: currentIndex ?? this.currentIndex,
       captureMode: captureMode ?? this.captureMode,
       flashOn: flashOn ?? this.flashOn,
+      retaking: retaking ?? this.retaking,
     );
   }
 }

@@ -77,6 +77,17 @@ class CropQuad {
     );
   }
 
+  bool similarTo(CropQuad other, [double epsilon = 0.035]) {
+    return (tlX - other.tlX).abs() <= epsilon &&
+        (tlY - other.tlY).abs() <= epsilon &&
+        (trX - other.trX).abs() <= epsilon &&
+        (trY - other.trY).abs() <= epsilon &&
+        (brX - other.brX).abs() <= epsilon &&
+        (brY - other.brY).abs() <= epsilon &&
+        (blX - other.blX).abs() <= epsilon &&
+        (blY - other.blY).abs() <= epsilon;
+  }
+
   @override
   bool operator ==(Object other) {
     return other is CropQuad &&

@@ -1,3 +1,4 @@
+import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/core/errors/app_failure.dart';
 import 'package:docxan/core/export/backup_archive.dart';
 import 'package:docxan/core/library/library_ids.dart';
@@ -22,6 +23,7 @@ class SyncReport {
     this.restored = 0,
     this.failed = 0,
     this.message,
+    this.messageKey,
   });
 
   final SyncRunStatus status;
@@ -29,8 +31,23 @@ class SyncReport {
   final int restored;
   final int failed;
   final String? message;
+  final String? messageKey;
 
   bool get ok => status == SyncRunStatus.success || status == SyncRunStatus.idle;
+}
+
+String localizedSyncReport(AppLocalizations l10n, SyncReport report) {
+  return switch (report.messageKey) {
+    'need_account' => l10n.syncNeedAccount,
+    'not_configured' => l10n.syncNotConfigured,
+    'nothing_pending' => l10n.syncNothingPending,
+    'complete' => l10n.syncComplete,
+    'need_pin' => l10n.pin,
+    'failed' => l10n.syncFailedMessage,
+    'restore_complete' => l10n.restoreComplete,
+    'restore_failed' => l10n.restoreFailed,
+    _ => l10n.syncComplete,
+  };
 }
 
 class SyncManager {
@@ -43,14 +60,14 @@ class SyncManager {
     if (!session.isAuthenticated || session.userId == null) {
       return const SyncReport(
         status: SyncRunStatus.skipped,
-        message: 'Crea una cuenta para sincronizar.',
+        messageKey: 'need_account',
       );
     }
     final storage = _ref.read(r2StorageServiceProvider);
     if (!storage.isConfigured) {
       return const SyncReport(
         status: SyncRunStatus.skipped,
-        message: 'Añade SUPABASE_URL y SUPABASE_ANON_KEY en env.json.',
+        messageKey: 'not_configured',
       );
     }
 
@@ -70,7 +87,7 @@ class SyncManager {
     if (jobs.isEmpty) {
       return const SyncReport(
         status: SyncRunStatus.success,
-        message: 'Nada pendiente.',
+        messageKey: 'nothing_pending',
       );
     }
 
@@ -93,7 +110,7 @@ class SyncManager {
         uploaded += 1;
       } catch (error) {
         AppLogger.debug('Sync job ${job.id} failed: $error');
-        lastError = error.toString();
+        lastError = error is AppFailure ? error.message : error.toString();
         await queue.mark(job.id, SyncStatus.failed, error: lastError);
         if (job.type != SyncJobType.deleteRemote) {
           await catalog.setDocumentSyncStatus(job.entityId, SyncStatus.failed);
@@ -106,14 +123,16 @@ class SyncManager {
       return SyncReport(
         status: SyncRunStatus.failed,
         failed: failed,
-        message: lastError ?? 'La sincronización falló.',
+        messageKey: lastError == 'need_pin' ? 'need_pin' : 'failed',
       );
     }
     return SyncReport(
       status: failed > 0 ? SyncRunStatus.failed : SyncRunStatus.success,
       uploaded: uploaded,
       failed: failed,
-      message: failed > 0 ? lastError : 'Sincronización lista.',
+      messageKey: failed > 0
+          ? (lastError == 'need_pin' ? 'need_pin' : 'failed')
+          : 'complete',
     );
   }
 
@@ -121,10 +140,16 @@ class SyncManager {
     final session = _ref.read(sessionProvider);
     final userId = session.userId;
     if (!session.isAuthenticated || userId == null) {
-      throw const AuthFailure('Inicia sesión para restaurar.');
+      return const SyncReport(
+        status: SyncRunStatus.skipped,
+        messageKey: 'need_account',
+      );
     }
     if (pin.length < 4) {
-      throw const CryptoFailure('El backup cifrado necesita tu PIN.');
+      return const SyncReport(
+        status: SyncRunStatus.failed,
+        messageKey: 'need_pin',
+      );
     }
     final storage = _ref.read(r2StorageServiceProvider);
     final remote = _ref.read(remoteMetadataClientProvider);
@@ -134,7 +159,7 @@ class SyncManager {
     if (backups.isEmpty) {
       return const SyncReport(
         status: SyncRunStatus.success,
-        message: 'No hay backups remotos.',
+        messageKey: 'nothing_pending',
       );
     }
 
@@ -209,14 +234,15 @@ class SyncManager {
       return SyncReport(
         status: SyncRunStatus.failed,
         failed: failed,
-        message: lastError ?? 'No se pudo restaurar el backup.',
+        messageKey: 'restore_failed',
+        message: lastError,
       );
     }
     return SyncReport(
       status: SyncRunStatus.success,
       restored: restored,
       failed: failed,
-      message: 'Restauración lista.',
+      messageKey: 'restore_complete',
     );
   }
 
@@ -243,9 +269,7 @@ class SyncManager {
         if (document == null) return;
         final pin = _ref.read(pinServiceProvider).verifiedPin;
         if (pin == null || pin.isEmpty) {
-          throw const CryptoFailure(
-            'Introduce el PIN para cifrar el backup.',
-          );
+          throw const CryptoFailure('need_pin');
         }
         await remote.upsertDocument(userId: userId, document: document);
         final zip = BackupArchive.pack(document);

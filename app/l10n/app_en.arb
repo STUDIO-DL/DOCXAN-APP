@@ -215,5 +215,13 @@
   "relativeMinutes": "{count} min ago",
   "relativeHours": "{count} h ago",
   "relativeYesterday": "Yesterday",
-  "relativeDays": "{count} d ago"
+  "relativeDays": "{count} d ago",
+  "documentNamed": "Document {date}",
+  "retakePage": "Retake",
+  "compressionSmall": "Small",
+  "compressionHigh": "High quality",
+  "darkTheme": "Dark",
+  "folderPersonal": "Personal",
+  "folderUniversity": "University",
+  "folderWork": "Work"
 }

@@ -1,6 +1,7 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/library_collections.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/models/saved_folder.dart';
@@ -101,7 +102,10 @@ class _FoldersPageState extends ConsumerState<FoldersPage> {
     ].where((item) => q.isEmpty || item.title.toLowerCase().contains(q));
 
     final folders = library.folders.where((folder) {
-      return q.isEmpty || folder.name.toLowerCase().contains(q);
+      final label = localizedSavedFolderName(l10n, folder).toLowerCase();
+      return q.isEmpty ||
+          folder.name.toLowerCase().contains(q) ||
+          label.contains(q);
     }).toList();
 
     return Scaffold(
@@ -210,7 +214,7 @@ class _FoldersPageState extends ConsumerState<FoldersPage> {
       final name = await _promptName(
         title: l10n.rename,
         hint: l10n.folderName,
-        initial: folder.name,
+        initial: localizedSavedFolderName(l10n, folder),
       );
       if (name != null) await catalog.renameFolder(folder.id, name);
     } else if (action == 'delete') {
@@ -319,7 +323,10 @@ class _QuickAccessTile extends StatelessWidget {
             Icon(icon, color: DocxanColors.ink),
             const SizedBox(height: 8),
             Text(
-              folder.name,
+              localizedSavedFolderName(
+                AppLocalizations.of(context),
+                folder,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyMedium,

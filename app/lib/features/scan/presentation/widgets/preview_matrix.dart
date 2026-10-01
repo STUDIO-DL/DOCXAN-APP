@@ -11,7 +11,7 @@ ColorFilter previewColorFilter({
   if (filter == ScanFilterKind.document) {
     c = c < 1 ? 1.16 : c + 0.16;
   } else if (filter == ScanFilterKind.bw) {
-    c = 2.1;
+    c = 7.2;
   } else if (filter == ScanFilterKind.color) {
     c = c < 1 ? 1.1 : c + 0.08;
   }

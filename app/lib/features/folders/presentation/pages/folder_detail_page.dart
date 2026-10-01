@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/library_collections.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/models/saved_document.dart';
@@ -28,7 +29,11 @@ class FolderDetailPage extends ConsumerWidget {
       LibraryCollections.recent => l10n.recents,
       LibraryCollections.favorites => l10n.favorites,
       LibraryCollections.trash => l10n.trash,
-      _ => library.folderById(folderId)?.name ?? l10n.folders,
+      _ => localizedFolderName(
+          l10n,
+          folderId: folderId,
+          storedName: library.folderById(folderId)?.name,
+        ),
     };
 
     return Scaffold(
@@ -140,7 +145,7 @@ class FolderDetailPage extends ConsumerWidget {
             ),
             for (final folder in folders)
               ListTile(
-                title: Text(folder.name),
+                title: Text(localizedSavedFolderName(l10n, folder)),
                 onTap: () => Navigator.pop(context, folder.id),
               ),
           ],

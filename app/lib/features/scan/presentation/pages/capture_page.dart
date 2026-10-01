@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
 import 'package:docxan/core/imaging/crop_quad.dart';
@@ -28,11 +29,13 @@ class _CapturePageState extends ConsumerState<CapturePage>
     with WidgetsBindingObserver {
   CameraController? _camera;
   bool _busy = false;
+  bool _capturing = false;
   String? _error;
   bool _showTips = true;
   bool _documentReady = false;
   CropQuad? _liveQuad;
   DateTime _lastDetectAt = DateTime.fromMillisecondsSinceEpoch(0);
+  int _stableHits = 0;
 
   @override
   void initState() {
@@ -76,13 +79,28 @@ class _CapturePageState extends ConsumerState<CapturePage>
         (camera) => camera.lensDirection == CameraLensDirection.back,
         orElse: () => cameras.first,
       );
-      final controller = CameraController(
-        back,
-        ResolutionPreset.high,
-        enableAudio: false,
-        imageFormatGroup: ImageFormatGroup.jpeg,
-      );
-      await controller.initialize();
+      final format = defaultTargetPlatform == TargetPlatform.iOS
+          ? ImageFormatGroup.bgra8888
+          : ImageFormatGroup.yuv420;
+      CameraController? controller;
+      try {
+        controller = CameraController(
+          back,
+          ResolutionPreset.veryHigh,
+          enableAudio: false,
+          imageFormatGroup: format,
+        );
+        await controller.initialize();
+      } catch (_) {
+        await controller?.dispose();
+        controller = CameraController(
+          back,
+          ResolutionPreset.high,
+          enableAudio: false,
+          imageFormatGroup: format,
+        );
+        await controller.initialize();
+      }
       if (!mounted) {
         await controller.dispose();
         return;
@@ -115,14 +133,16 @@ class _CapturePageState extends ConsumerState<CapturePage>
     }
   }
 
-  Future<void> _ingest(String path) async {
+  Future<void> _ingest(String path, {CropQuad? preferred}) async {
     final store = ref.read(localFileStoreProvider);
     final persisted = await store.copyToCache(
       path,
       'capture_${DateTime.now().microsecondsSinceEpoch}.jpg',
     );
     final auto = ref.read(scanSessionProvider).captureMode == CaptureMode.auto;
-    final crop = auto ? detectDocumentQuadFromFile(persisted) : CropQuad.inset;
+    final crop = preferred != null && preferred != CropQuad.inset
+        ? preferred
+        : (auto ? detectDocumentQuadFromFile(persisted) : CropQuad.inset);
     ref.read(scanSessionProvider.notifier).addPage(persisted, crop: crop);
     if (!mounted) return;
     context.go(AppRoutes.scanEdit);
@@ -156,10 +176,11 @@ class _CapturePageState extends ConsumerState<CapturePage>
     _lastDetectAt = now;
     final auto = ref.read(scanSessionProvider).captureMode == CaptureMode.auto;
     if (!auto) {
-      if (_documentReady || _liveQuad != null) {
+      if (_documentReady || _liveQuad != null || _stableHits != 0) {
         setState(() {
           _documentReady = false;
           _liveQuad = null;
+          _stableHits = 0;
         });
       }
       return;
@@ -167,27 +188,65 @@ class _CapturePageState extends ConsumerState<CapturePage>
     try {
       final quad = detectDocumentQuadFromCamera(image);
       final ready = isDocumentDetected(quad);
-      if (ready == _documentReady && _liveQuad == quad) return;
+      var hits = 0;
+      if (ready && _liveQuad != null && quad.similarTo(_liveQuad!)) {
+        hits = _stableHits + 1;
+      } else {
+        hits = ready ? 1 : 0;
+      }
+      if (ready == _documentReady && _liveQuad == quad && hits == _stableHits) {
+        return;
+      }
       if (ready && !_documentReady) {
         HapticFeedback.selectionClick();
       }
       setState(() {
         _liveQuad = ready ? quad : null;
         _documentReady = ready;
+        _stableHits = hits;
       });
+      if (ready && hits >= 5 && !_capturing) {
+        _takePicture();
+      }
     } catch (error) {
       AppLogger.debug('Live detect skipped: $error');
     }
   }
 
+  Future<void> _focusAt(TapDownDetails details, BuildContext context) async {
+    final camera = _camera;
+    if (camera == null || !camera.value.isInitialized) return;
+    final box = context.findRenderObject();
+    if (box is! RenderBox) return;
+    final size = box.size;
+    if (size.width <= 0 || size.height <= 0) return;
+    final offset = Offset(
+      (details.localPosition.dx / size.width).clamp(0.0, 1.0),
+      (details.localPosition.dy / size.height).clamp(0.0, 1.0),
+    );
+    try {
+      await camera.setFocusPoint(offset);
+      await camera.setExposurePoint(offset);
+    } catch (error) {
+      AppLogger.debug('Focus skipped: $error');
+    }
+  }
+
   Future<void> _takePicture() async {
     final camera = _camera;
-    if (_busy || camera == null || !camera.value.isInitialized) return;
-    setState(() => _busy = true);
+    if (_capturing || camera == null || !camera.value.isInitialized) return;
+    _capturing = true;
+    _busy = true;
+    if (mounted) setState(() {});
+    final preferred = ref.read(scanSessionProvider).captureMode == CaptureMode.auto
+        ? _liveQuad
+        : null;
+    var captured = false;
     try {
       await _stopStream();
       final file = await camera.takePicture();
-      await _ingest(file.path);
+      await _ingest(file.path, preferred: preferred);
+      captured = true;
     } catch (error) {
       AppLogger.debug('Capture failed: $error');
       if (mounted) {
@@ -196,7 +255,18 @@ class _CapturePageState extends ConsumerState<CapturePage>
         );
       }
     } finally {
-      if (mounted) setState(() => _busy = false);
+      _capturing = false;
+      if (mounted) {
+        setState(() => _busy = false);
+        if (!captured) {
+          final live = _camera;
+          if (live != null && live.value.isInitialized) {
+            await _startStream(live);
+          }
+        }
+      } else {
+        _busy = false;
+      }
     }
   }
 
@@ -239,7 +309,14 @@ class _CapturePageState extends ConsumerState<CapturePage>
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () => context.go(AppRoutes.home),
+                    onPressed: () {
+                      ref.read(scanSessionProvider.notifier).cancelRetake();
+                      context.go(
+                        ref.read(scanSessionProvider).pages.isEmpty
+                            ? AppRoutes.home
+                            : AppRoutes.scanEdit,
+                      );
+                    },
                     icon: const Icon(Icons.close),
                   ),
                   Expanded(
@@ -264,15 +341,21 @@ class _CapturePageState extends ConsumerState<CapturePage>
                       ColoredBox(
                         color: const Color(0xFFF0F0EC),
                         child: ready
-                            ? FittedBox(
-                                fit: BoxFit.cover,
-                                child: SizedBox(
-                                  width:
-                                      camera.value.previewSize?.height ?? 3,
-                                  height:
-                                      camera.value.previewSize?.width ?? 4,
-                                  child: CameraPreview(camera),
-                                ),
+                            ? Builder(
+                                builder: (previewContext) {
+                                  return GestureDetector(
+                                    onTapDown: (details) =>
+                                        _focusAt(details, previewContext),
+                                    child: FittedBox(
+                                      fit: BoxFit.cover,
+                                      child: SizedBox(
+                                        width: camera.value.previewSize?.height ?? 3,
+                                        height: camera.value.previewSize?.width ?? 4,
+                                        child: CameraPreview(camera),
+                                      ),
+                                    ),
+                                  );
+                                },
                               )
                             : Center(
                                 child: _error == null
@@ -295,6 +378,7 @@ class _CapturePageState extends ConsumerState<CapturePage>
                             ? _DetectedFramePainter(_liveQuad ?? CropQuad.inset)
                             : const _ViewfinderPainter(),
                       ),
+                      const CustomPaint(painter: _GridPainter()),
                       if (_documentReady)
                         const Align(
                           alignment: Alignment(0, -0.82),
@@ -505,6 +589,26 @@ class _ModeChip extends StatelessWidget {
       ),
     );
   }
+}
+
+class _GridPainter extends CustomPainter {
+  const _GridPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0x66FFFFFF)
+      ..strokeWidth = 1;
+    for (var i = 1; i <= 2; i++) {
+      final dx = size.width * i / 3;
+      final dy = size.height * i / 3;
+      canvas.drawLine(Offset(dx, 0), Offset(dx, size.height), paint);
+      canvas.drawLine(Offset(0, dy), Offset(size.width, dy), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _ViewfinderPainter extends CustomPainter {

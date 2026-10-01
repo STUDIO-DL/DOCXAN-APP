@@ -1395,6 +1395,54 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Hace {count} d'**
   String relativeDays(int count);
+
+  /// No description provided for @documentNamed.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento {date}'**
+  String documentNamed(String date);
+
+  /// No description provided for @retakePage.
+  ///
+  /// In es, this message translates to:
+  /// **'Retomar'**
+  String get retakePage;
+
+  /// No description provided for @compressionSmall.
+  ///
+  /// In es, this message translates to:
+  /// **'Pequeño'**
+  String get compressionSmall;
+
+  /// No description provided for @compressionHigh.
+  ///
+  /// In es, this message translates to:
+  /// **'Alta calidad'**
+  String get compressionHigh;
+
+  /// No description provided for @darkTheme.
+  ///
+  /// In es, this message translates to:
+  /// **'Oscuro'**
+  String get darkTheme;
+
+  /// No description provided for @folderPersonal.
+  ///
+  /// In es, this message translates to:
+  /// **'Personal'**
+  String get folderPersonal;
+
+  /// No description provided for @folderUniversity.
+  ///
+  /// In es, this message translates to:
+  /// **'Universidad'**
+  String get folderUniversity;
+
+  /// No description provided for @folderWork.
+  ///
+  /// In es, this message translates to:
+  /// **'Trabajo'**
+  String get folderWork;
 }
 
 class _AppLocalizationsDelegate

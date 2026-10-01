@@ -7,6 +7,7 @@ import 'package:docxan/core/export/docx_builder.dart';
 import 'package:docxan/core/export/export_filenames.dart';
 import 'package:docxan/core/export/image_export.dart';
 import 'package:docxan/core/extensions/date_time_x.dart';
+import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/models/saved_document.dart';
 import 'package:docxan/core/storage/local_file_store.dart';
@@ -99,12 +100,14 @@ class _DocumentPageState extends ConsumerState<DocumentPage> {
                 border: Border.all(color: DocxanColors.hairline),
               ),
               clipBehavior: Clip.antiAlias,
-              child: _Preview(path: saved.previewPath),
+              child: _PagesPreview(paths: saved.pagePaths.isNotEmpty ? saved.pagePaths : saved.imagePaths),
             ),
           ),
           const SizedBox(height: 20),
           Text('${doc.format} · ${formatBytes(doc.sizeBytes)}'),
-          Text('${doc.folderName} · ${doc.updatedAt.toShortDate()}'),
+          Text(
+            '${localizedFolderName(l10n, folderId: doc.folderId, storedName: doc.folderName)} · ${doc.updatedAt.toShortDate()}',
+          ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
@@ -362,19 +365,46 @@ class _DocumentPageState extends ConsumerState<DocumentPage> {
   }
 }
 
-class _Preview extends StatelessWidget {
-  const _Preview({this.path});
+class _PagesPreview extends StatelessWidget {
+  const _PagesPreview({required this.paths});
 
-  final String? path;
+  final List<String> paths;
 
   @override
   Widget build(BuildContext context) {
-    final preview = path;
-    if (preview != null && File(preview).existsSync()) {
-      return Image.file(File(preview), fit: BoxFit.contain);
+    final existing = [
+      for (final path in paths)
+        if (path.isNotEmpty && File(path).existsSync()) path,
+    ];
+    if (existing.isEmpty) {
+      return const Center(
+        child: Icon(Icons.description_outlined, size: 64),
+      );
     }
-    return const Center(
-      child: Icon(Icons.description_outlined, size: 64),
+    return PageView.builder(
+      itemCount: existing.length,
+      itemBuilder: (context, index) {
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.file(File(existing[index]), fit: BoxFit.contain),
+            if (existing.length > 1)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    '${index + 1}/${existing.length}',
+                    style: const TextStyle(
+                      color: DocxanColors.inkMuted,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

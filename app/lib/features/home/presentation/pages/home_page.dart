@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/library_collections.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/models/library_models.dart';
@@ -96,9 +97,21 @@ class HomePage extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 28, 20, 8),
-              child: Text(
-                l10n.recents,
-                style: Theme.of(context).textTheme.titleMedium,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.recentDocuments,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.push(
+                      AppRoutes.folderPath(LibraryCollections.recent),
+                    ),
+                    child: Text(l10n.viewAll),
+                  ),
+                ],
               ),
             ),
             if (recents.isEmpty)
@@ -110,7 +123,7 @@ class HomePage extends ConsumerWidget {
                 ),
               )
             else
-              for (final doc in recents)
+              for (final doc in recents.take(8))
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: _DocumentTile(
@@ -119,6 +132,41 @@ class HomePage extends ConsumerWidget {
                     onTap: () => context.push(AppRoutes.documentPath(doc.id)),
                   ),
                 ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.recentFolders,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go(AppRoutes.folders),
+                    child: Text(l10n.viewAll),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 88,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  for (final folder in library.folders.take(8))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ActionChip(
+                        label: Text(localizedSavedFolderName(l10n, folder)),
+                        onPressed: () =>
+                            context.push(AppRoutes.folderPath(folder.id)),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

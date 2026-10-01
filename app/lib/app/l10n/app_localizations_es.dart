@@ -675,4 +675,29 @@ class AppLocalizationsEs extends AppLocalizations {
     return 'Hace $count d';
   }
 
+  @override
+  String documentNamed(String date) {
+    return 'Documento $date';
+  }
+
+  @override
+  String get retakePage => 'Retomar';
+
+  @override
+  String get compressionSmall => 'Pequeño';
+
+  @override
+  String get compressionHigh => 'Alta calidad';
+
+  @override
+  String get darkTheme => 'Oscuro';
+
+  @override
+  String get folderPersonal => 'Personal';
+
+  @override
+  String get folderUniversity => 'Universidad';
+
+  @override
+  String get folderWork => 'Trabajo';
 }

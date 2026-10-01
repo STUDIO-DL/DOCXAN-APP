@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:docxan/core/constants/app_constants.dart';
+import 'package:docxan/core/imaging/compression_profile.dart';
 import 'package:docxan/core/imaging/crop_quad.dart';
 import 'package:docxan/core/imaging/scan_filters.dart';
 import 'package:image/image.dart' as img;
@@ -13,10 +13,12 @@ Uint8List processScanPageIsolate(Map<String, Object?> payload) {
   final bytes = File(path).readAsBytesSync();
   final decoded = img.decodeImage(bytes);
   if (decoded == null) {
-    throw StateError('No se pudo decodificar la imagen');
+    throw StateError('decode_failed');
   }
 
-  var work = _constrain(decoded, maxSide: 2000);
+  final maxSide = (payload['maxSide'] as num?)?.toInt() ??
+      CompressionProfile.balanced.maxSide;
+  var work = _constrain(decoded, maxSide: maxSide);
   final crop = CropQuad(
     tlX: (payload['tlX'] as num).toDouble(),
     tlY: (payload['tlY'] as num).toDouble(),
@@ -45,7 +47,9 @@ Uint8List processScanPageIsolate(Map<String, Object?> payload) {
     contrast: (payload['contrast'] as num?)?.toDouble() ?? 50,
   );
 
-  return encodeDocumentJpeg(work);
+  final maxBytes = (payload['maxBytes'] as num?)?.toInt() ??
+      CompressionProfile.balanced.maxBytes;
+  return encodeDocumentJpeg(work, maxBytes: maxBytes);
 }
 
 img.Image _constrain(img.Image source, {required int maxSide}) {
@@ -56,6 +60,7 @@ img.Image _constrain(img.Image source, {required int maxSide}) {
     source,
     width: (source.width * scale).round(),
     height: (source.height * scale).round(),
+    interpolation: img.Interpolation.linear,
   );
 }
 
@@ -76,6 +81,8 @@ img.Image perspectiveCrop(img.Image source, CropQuad quad) {
   );
 
   final out = img.Image(width: width, height: height);
+  final maxX = source.width - 1.0;
+  final maxY = source.height - 1.0;
   for (var y = 0; y < height; y++) {
     final v = height == 1 ? 0.0 : y / (height - 1);
     for (var x = 0; x < width; x++) {
@@ -83,19 +90,21 @@ img.Image perspectiveCrop(img.Image source, CropQuad quad) {
       final top = _lerp(tl, tr, u);
       final bot = _lerp(bl, br, u);
       final sample = _lerp(top, bot, v);
-      final sx = sample.$1.round().clamp(0, source.width - 1);
-      final sy = sample.$2.round().clamp(0, source.height - 1);
-      out.setPixel(x, y, source.getPixel(sx, sy));
+      final color = _sampleBilinear(source, sample.$1, sample.$2, maxX, maxY);
+      out.setPixelRgb(x, y, color.$1, color.$2, color.$3);
     }
   }
   return out;
 }
 
-Uint8List encodeDocumentJpeg(img.Image image) {
-  var quality = 85;
+Uint8List encodeDocumentJpeg(
+  img.Image image, {
+  int maxBytes = 800 * 1024,
+}) {
+  var quality = 88;
   var encoded = img.encodeJpg(image, quality: quality);
-  while (encoded.length > AppConstants.targetPageBytesMax && quality > 35) {
-    quality -= 10;
+  while (encoded.length > maxBytes && quality > 42) {
+    quality -= 8;
     encoded = img.encodeJpg(image, quality: quality);
   }
   return Uint8List.fromList(encoded);
@@ -116,4 +125,36 @@ double _dist((double, double) a, (double, double) b) {
 
 (double, double) _lerp((double, double) a, (double, double) b, double t) {
   return (a.$1 + (b.$1 - a.$1) * t, a.$2 + (b.$2 - a.$2) * t);
+}
+
+(int, int, int) _sampleBilinear(
+  img.Image source,
+  double x,
+  double y,
+  double maxX,
+  double maxY,
+) {
+  final sx = x.clamp(0, maxX);
+  final sy = y.clamp(0, maxY);
+  final x0 = sx.floor();
+  final y0 = sy.floor();
+  final x1 = math.min(x0 + 1, source.width - 1);
+  final y1 = math.min(y0 + 1, source.height - 1);
+  final tx = sx - x0;
+  final ty = sy - y0;
+  final c00 = source.getPixel(x0, y0);
+  final c10 = source.getPixel(x1, y0);
+  final c01 = source.getPixel(x0, y1);
+  final c11 = source.getPixel(x1, y1);
+  return (
+    _bilerp(c00.r, c10.r, c01.r, c11.r, tx, ty).round().clamp(0, 255),
+    _bilerp(c00.g, c10.g, c01.g, c11.g, tx, ty).round().clamp(0, 255),
+    _bilerp(c00.b, c10.b, c01.b, c11.b, tx, ty).round().clamp(0, 255),
+  );
+}
+
+double _bilerp(num a, num b, num c, num d, double tx, double ty) {
+  final top = a + (b - a) * tx;
+  final bot = c + (d - c) * tx;
+  return top + (bot - top) * ty;
 }
