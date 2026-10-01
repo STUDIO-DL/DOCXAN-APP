@@ -1,3 +1,4 @@
+import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/theme/colors.dart';
 import 'package:docxan/core/models/library_models.dart';
 import 'package:docxan/core/utils/formatters.dart';
@@ -62,7 +63,10 @@ class DocxanDocumentTile extends StatelessWidget {
               ),
             ),
             Text(
-              formatRelativeTime(document.updatedAt),
+              formatRelativeTime(
+                document.updatedAt,
+                l10n: AppLocalizations.of(context),
+              ),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(width: 4),

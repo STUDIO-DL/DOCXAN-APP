@@ -4,6 +4,7 @@ import 'package:docxan/app/theme/colors.dart';
 import 'package:docxan/app/theme/spacing.dart';
 import 'package:docxan/core/session/session_controller.dart';
 import 'package:docxan/core/widgets/docxan_logo.dart';
+import 'package:docxan/core/widgets/language_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +22,8 @@ class OnboardingPage extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           children: [
             const DocxanLogo(size: 120),
+            const SizedBox(height: DocxanSpacing.md),
+            const LanguagePickerButton(),
             const SizedBox(height: DocxanSpacing.md),
             Text(
               l10n.onboardingTitle,

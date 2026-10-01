@@ -12,9 +12,11 @@ class LegalPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final isPrivacy = kind != 'terms';
     final title = isPrivacy ? l10n.privacyPolicy : l10n.termsOfUse;
-    final asset = isPrivacy
-        ? 'assets/legal/privacy.md'
-        : 'assets/legal/terms.md';
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final asset = legalMarkdownAsset(
+      kind: kind,
+      languageCode: languageCode,
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -32,4 +34,16 @@ class LegalPage extends StatelessWidget {
       ),
     );
   }
+}
+
+String legalMarkdownAsset({
+  required String kind,
+  required String languageCode,
+}) {
+  final base = kind == 'terms' ? 'terms' : 'privacy';
+  return switch (languageCode) {
+    'en' => 'assets/legal/${base}_en.md',
+    'fr' => 'assets/legal/${base}_fr.md',
+    _ => 'assets/legal/$base.md',
+  };
 }

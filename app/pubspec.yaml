@@ -54,4 +54,8 @@ flutter:
     - assets/images/logo.png
     - assets/images/logo_docxan.png
     - assets/legal/privacy.md
+    - assets/legal/privacy_en.md
+    - assets/legal/privacy_fr.md
     - assets/legal/terms.md
+    - assets/legal/terms_en.md
+    - assets/legal/terms_fr.md

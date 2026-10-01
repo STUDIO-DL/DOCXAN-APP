@@ -3,12 +3,14 @@ import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
+import 'package:docxan/core/locale/app_locales.dart';
 import 'package:docxan/core/security/biometric_service.dart';
 import 'package:docxan/core/session/session_controller.dart';
 import 'package:docxan/core/storage/storage_stats.dart';
 import 'package:docxan/core/sync/sync_manager.dart';
 import 'package:docxan/core/utils/formatters.dart';
 import 'package:docxan/core/widgets/doxan_app_header.dart';
+import 'package:docxan/core/widgets/language_picker.dart';
 import 'package:docxan/features/auth/presentation/controllers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,7 +88,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             const Divider(),
             ListTile(
               title: Text(l10n.language),
-              subtitle: Text(l10n.spanish),
+              subtitle: Text(
+                AppLocales.displayName(
+                  l10n,
+                  Localizations.localeOf(context).languageCode,
+                ),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => showLanguagePickerSheet(context),
             ),
             ListTile(
               title: Text(l10n.theme),
