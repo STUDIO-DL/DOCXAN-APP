@@ -134,8 +134,8 @@ double _dist((double, double) a, (double, double) b) {
   double maxX,
   double maxY,
 ) {
-  final sx = x.clamp(0, maxX);
-  final sy = y.clamp(0, maxY);
+  final sx = x.clamp(0.0, maxX);
+  final sy = y.clamp(0.0, maxY);
   final x0 = sx.floor();
   final y0 = sy.floor();
   final x1 = math.min(x0 + 1, source.width - 1);

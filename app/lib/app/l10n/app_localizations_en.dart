@@ -18,10 +18,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingTitle => 'Turn paper into digital documents';
 
   @override
-  String get onboardingBody => 'Scan, enhance, and organize from your phone. OCR and saving work without Internet. Your files stay on the device unless you turn on encrypted backup.';
+  String get onboardingBody =>
+      'Scan, enhance, and organize from your phone. OCR and saving work without Internet. Your files stay on the device unless you turn on encrypted backup.';
 
   @override
-  String get onboardingPrivacy => 'Privacy first: nothing is uploaded in the clear. If you forget your PIN, an end-to-end backup cannot be recovered.';
+  String get onboardingPrivacy =>
+      'Privacy first: nothing is uploaded in the clear. If you forget your PIN, an end-to-end backup cannot be recovered.';
 
   @override
   String get privacyPolicy => 'Privacy policy';
@@ -42,7 +44,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueAsGuest => 'Browse without an account';
 
   @override
-  String get guestBanner => 'You are in guest mode. Create an account to sync and back up.';
+  String get guestBanner =>
+      'You are in guest mode. Create an account to sync and back up.';
 
   @override
   String get goodMorning => 'Good morning';
@@ -60,7 +63,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTitle => 'Search';
 
   @override
-  String get homeSubtitle => 'Your documents, always with you. Scan, organize, and open them whenever you need.';
+  String get homeSubtitle =>
+      'Your documents, always with you. Scan, organize, and open them whenever you need.';
 
   @override
   String get viewAll => 'View all';
@@ -182,7 +186,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanPlaceholderTitle => 'Point at the document';
 
   @override
-  String get scanPlaceholderBody => 'The camera, crop, and OCR connect in week 2. This viewer marks the capture flow.';
+  String get scanPlaceholderBody =>
+      'The camera, crop, and OCR connect in week 2. This viewer marks the capture flow.';
 
   @override
   String get scanDocument => 'Scan document';
@@ -206,7 +211,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manual => 'Manual';
 
   @override
-  String get autoDetectionSoon => 'Automatic detection will be available later. Use Manual to crop.';
+  String get autoDetectionSoon =>
+      'Automatic detection will be available later. Use Manual to crop.';
 
   @override
   String get crop => 'Crop';
@@ -251,7 +257,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recognizingText => 'Recognizing text…';
 
   @override
-  String get cameraUnavailable => 'Could not open the camera. Check the permission.';
+  String get cameraUnavailable =>
+      'Could not open the camera. Check the permission.';
 
   @override
   String get cameraPermissionDenied => 'Docxan needs the camera to scan.';
@@ -335,7 +342,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backup => 'Secure backup';
 
   @override
-  String get backupSubtitle => 'Encrypted on the phone, stored on Cloudflare R2';
+  String get backupSubtitle =>
+      'Encrypted on the phone, stored on Cloudflare R2';
 
   @override
   String get deviceOnly => 'This device only';
@@ -362,16 +370,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get googleSignIn => 'Continue with Google';
 
   @override
-  String get authBackendPending => 'Supabase keys are missing. Copy app/env.example.json to app/env.json and launch with --dart-define-from-file=env.json.';
+  String get authBackendPending =>
+      'Supabase keys are missing. Copy app/env.example.json to app/env.json and launch with --dart-define-from-file=env.json.';
 
   @override
-  String get authCheckEmail => 'Check your email to verify the account before signing in.';
+  String get authCheckEmail =>
+      'Check your email to verify the account before signing in.';
 
   @override
-  String get authResetSent => 'If the email exists, we sent you a recovery link.';
+  String get authResetSent =>
+      'If the email exists, we sent you a recovery link.';
 
   @override
-  String get googlePending => 'The Google Web Client ID is missing in env.json, or SHA-1 / package in Google Cloud.';
+  String get googlePending =>
+      'The Google Web Client ID is missing in env.json, or SHA-1 / package in Google Cloud.';
 
   @override
   String get authInvalid => 'Invalid email or password.';
@@ -413,7 +425,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptySearch => 'No results';
 
   @override
-  String get emptySearchBody => 'When you have documents, they will show up here.';
+  String get emptySearchBody =>
+      'When you have documents, they will show up here.';
 
   @override
   String get comingSoon => 'Coming soon';
@@ -428,7 +441,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trash => 'Trash';
 
   @override
-  String get foldersSubtitle => 'Organize your documents easily. Open your folders and find what you need.';
+  String get foldersSubtitle =>
+      'Organize your documents easily. Open your folders and find what you need.';
 
   @override
   String get searchFolders => 'Search folders...';
@@ -452,7 +466,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pinSetupTitle => 'Create your PIN';
 
   @override
-  String get pinSetupSubtitle => 'Choose 6 digits to protect Docxan on this device.';
+  String get pinSetupSubtitle =>
+      'Choose 6 digits to protect Docxan on this device.';
 
   @override
   String get pinConfirmTitle => 'Repeat the PIN';
@@ -553,13 +568,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmDelete => 'Delete?';
 
   @override
-  String get confirmDeleteFolder => 'The folder is removed and its documents move to My files.';
+  String get confirmDeleteFolder =>
+      'The folder is removed and its documents move to My files.';
 
   @override
-  String get confirmDeleteDocument => 'The document will go to the trash for 30 days.';
+  String get confirmDeleteDocument =>
+      'The document will go to the trash for 30 days.';
 
   @override
-  String get confirmDeleteAll => 'All local documents will be permanently deleted.';
+  String get confirmDeleteAll =>
+      'All local documents will be permanently deleted.';
 
   @override
   String get restore => 'Restore';
@@ -595,7 +613,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unlockWithBiometrics => 'Unlock with fingerprint or Face unlock';
 
   @override
-  String get biometricsUnavailable => 'Biometrics are not available on this device.';
+  String get biometricsUnavailable =>
+      'Biometrics are not available on this device.';
 
   @override
   String get legal => 'Legal';

@@ -5,8 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppThemeController extends Notifier<ThemeMode> {
+  var _alive = true;
+
   @override
   ThemeMode build() {
+    _alive = true;
+    ref.onDispose(() => _alive = false);
     Future<void>.microtask(_hydrate);
     return ThemeMode.light;
   }
@@ -15,7 +19,7 @@ class AppThemeController extends Notifier<ThemeMode> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final saved = prefs.getString(StorageKeys.appTheme);
-      if (!ref.mounted) return;
+      if (!_alive) return;
       if (saved == 'dark') state = ThemeMode.dark;
       if (saved == 'light') state = ThemeMode.light;
     } catch (error) {

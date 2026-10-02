@@ -18,10 +18,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get onboardingTitle => 'Transformez le papier en documents numériques';
 
   @override
-  String get onboardingBody => 'Scannez, améliorez et organisez depuis le téléphone. L’OCR et l’enregistrement fonctionnent sans Internet. Vos fichiers restent sur l’appareil, sauf si vous activez une sauvegarde chiffrée.';
+  String get onboardingBody =>
+      'Scannez, améliorez et organisez depuis le téléphone. L’OCR et l’enregistrement fonctionnent sans Internet. Vos fichiers restent sur l’appareil, sauf si vous activez une sauvegarde chiffrée.';
 
   @override
-  String get onboardingPrivacy => 'La confidentialité d’abord : rien n’est envoyé en clair. Si vous oubliez le code PIN, une sauvegarde de bout en bout ne peut pas être récupérée.';
+  String get onboardingPrivacy =>
+      'La confidentialité d’abord : rien n’est envoyé en clair. Si vous oubliez le code PIN, une sauvegarde de bout en bout ne peut pas être récupérée.';
 
   @override
   String get privacyPolicy => 'Politique de confidentialité';
@@ -42,7 +44,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get continueAsGuest => 'Explorer sans compte';
 
   @override
-  String get guestBanner => 'Vous êtes en mode invité. Créez un compte pour synchroniser et sauvegarder.';
+  String get guestBanner =>
+      'Vous êtes en mode invité. Créez un compte pour synchroniser et sauvegarder.';
 
   @override
   String get goodMorning => 'Bonjour';
@@ -60,7 +63,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchTitle => 'Rechercher';
 
   @override
-  String get homeSubtitle => 'Vos documents, toujours avec vous. Scannez, organisez et ouvrez-les quand vous en avez besoin.';
+  String get homeSubtitle =>
+      'Vos documents, toujours avec vous. Scannez, organisez et ouvrez-les quand vous en avez besoin.';
 
   @override
   String get viewAll => 'Tout voir';
@@ -182,7 +186,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get scanPlaceholderTitle => 'Pointez vers le document';
 
   @override
-  String get scanPlaceholderBody => 'La caméra, le recadrage et l’OCR se connectent à la semaine 2. Ce visuel marque le flux de capture.';
+  String get scanPlaceholderBody =>
+      'La caméra, le recadrage et l’OCR se connectent à la semaine 2. Ce visuel marque le flux de capture.';
 
   @override
   String get scanDocument => 'Scanner un document';
@@ -206,7 +211,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get manual => 'Manuel';
 
   @override
-  String get autoDetectionSoon => 'La détection automatique sera disponible plus tard. Utilisez Manuel pour recadrer.';
+  String get autoDetectionSoon =>
+      'La détection automatique sera disponible plus tard. Utilisez Manuel pour recadrer.';
 
   @override
   String get crop => 'Recadrer';
@@ -251,10 +257,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recognizingText => 'Reconnaissance du texte…';
 
   @override
-  String get cameraUnavailable => 'Impossible d’ouvrir la caméra. Vérifiez l’autorisation.';
+  String get cameraUnavailable =>
+      'Impossible d’ouvrir la caméra. Vérifiez l’autorisation.';
 
   @override
-  String get cameraPermissionDenied => 'Docxan a besoin de la caméra pour scanner.';
+  String get cameraPermissionDenied =>
+      'Docxan a besoin de la caméra pour scanner.';
 
   @override
   String get saveFailed => 'Impossible d’enregistrer le document.';
@@ -266,7 +274,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get noPagesToSave => 'Ajoutez au moins une page pour enregistrer.';
 
   @override
-  String get ocrUnavailable => 'Le texte a été enregistré vide. Le PDF est prêt.';
+  String get ocrUnavailable =>
+      'Le texte a été enregistré vide. Le PDF est prêt.';
 
   @override
   String get newFolder => 'Nouveau dossier';
@@ -335,7 +344,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backup => 'Sauvegarde sécurisée';
 
   @override
-  String get backupSubtitle => 'Chiffrée sur le téléphone, stockée sur Cloudflare R2';
+  String get backupSubtitle =>
+      'Chiffrée sur le téléphone, stockée sur Cloudflare R2';
 
   @override
   String get deviceOnly => 'Cet appareil uniquement';
@@ -362,22 +372,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get googleSignIn => 'Continuer avec Google';
 
   @override
-  String get authBackendPending => 'Les clés Supabase manquent. Copiez app/env.example.json vers app/env.json et lancez avec --dart-define-from-file=env.json.';
+  String get authBackendPending =>
+      'Les clés Supabase manquent. Copiez app/env.example.json vers app/env.json et lancez avec --dart-define-from-file=env.json.';
 
   @override
-  String get authCheckEmail => 'Vérifiez votre e-mail pour confirmer le compte avant de vous connecter.';
+  String get authCheckEmail =>
+      'Vérifiez votre e-mail pour confirmer le compte avant de vous connecter.';
 
   @override
-  String get authResetSent => 'Si l’e-mail existe, nous vous avons envoyé le lien de récupération.';
+  String get authResetSent =>
+      'Si l’e-mail existe, nous vous avons envoyé le lien de récupération.';
 
   @override
-  String get googlePending => 'L’ID client Web Google manque dans env.json, ou le SHA-1 / package dans Google Cloud.';
+  String get googlePending =>
+      'L’ID client Web Google manque dans env.json, ou le SHA-1 / package dans Google Cloud.';
 
   @override
   String get authInvalid => 'E-mail ou mot de passe non valides.';
 
   @override
-  String get passwordTooShort => 'Le mot de passe doit contenir au moins 8 caractères.';
+  String get passwordTooShort =>
+      'Le mot de passe doit contenir au moins 8 caractères.';
 
   @override
   String get sendReset => 'Envoyer le lien';
@@ -413,7 +428,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get emptySearch => 'Aucun résultat';
 
   @override
-  String get emptySearchBody => 'Lorsque vous aurez des documents, ils apparaîtront ici.';
+  String get emptySearchBody =>
+      'Lorsque vous aurez des documents, ils apparaîtront ici.';
 
   @override
   String get comingSoon => 'Bientôt';
@@ -428,7 +444,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get trash => 'Corbeille';
 
   @override
-  String get foldersSubtitle => 'Organisez vos documents facilement. Ouvrez vos dossiers et trouvez ce dont vous avez besoin.';
+  String get foldersSubtitle =>
+      'Organisez vos documents facilement. Ouvrez vos dossiers et trouvez ce dont vous avez besoin.';
 
   @override
   String get searchFolders => 'Rechercher des dossiers...';
@@ -452,13 +469,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pinSetupTitle => 'Créez votre code PIN';
 
   @override
-  String get pinSetupSubtitle => 'Choisissez 6 chiffres pour protéger Docxan sur cet appareil.';
+  String get pinSetupSubtitle =>
+      'Choisissez 6 chiffres pour protéger Docxan sur cet appareil.';
 
   @override
   String get pinConfirmTitle => 'Répétez le code PIN';
 
   @override
-  String get pinConfirmSubtitle => 'Saisissez à nouveau le même code PIN pour le confirmer.';
+  String get pinConfirmSubtitle =>
+      'Saisissez à nouveau le même code PIN pour le confirmer.';
 
   @override
   String get pinMismatch => 'Les codes PIN ne correspondent pas. Réessayez.';
@@ -553,13 +572,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get confirmDelete => 'Supprimer ?';
 
   @override
-  String get confirmDeleteFolder => 'Le dossier est supprimé et ses documents vont dans Mes fichiers.';
+  String get confirmDeleteFolder =>
+      'Le dossier est supprimé et ses documents vont dans Mes fichiers.';
 
   @override
-  String get confirmDeleteDocument => 'Le document ira à la corbeille pendant 30 jours.';
+  String get confirmDeleteDocument =>
+      'Le document ira à la corbeille pendant 30 jours.';
 
   @override
-  String get confirmDeleteAll => 'Tous les documents locaux seront définitivement supprimés.';
+  String get confirmDeleteAll =>
+      'Tous les documents locaux seront définitivement supprimés.';
 
   @override
   String get restore => 'Restaurer';
@@ -592,10 +614,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filterOcr => 'Avec texte OCR';
 
   @override
-  String get unlockWithBiometrics => 'Déverrouiller avec l’empreinte ou le déverrouillage facial';
+  String get unlockWithBiometrics =>
+      'Déverrouiller avec l’empreinte ou le déverrouillage facial';
 
   @override
-  String get biometricsUnavailable => 'La biométrie n’est pas disponible sur cet appareil.';
+  String get biometricsUnavailable =>
+      'La biométrie n’est pas disponible sur cet appareil.';
 
   @override
   String get legal => 'Mentions légales';
@@ -628,7 +652,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncNeedAccount => 'Créez un compte pour synchroniser.';
 
   @override
-  String get syncNotConfigured => 'Ajoutez les clés Supabase ou R2 dans env.json.';
+  String get syncNotConfigured =>
+      'Ajoutez les clés Supabase ou R2 dans env.json.';
 
   @override
   String get syncComplete => 'Synchronisation terminée.';

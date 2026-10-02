@@ -3,8 +3,12 @@ import 'package:docxan/core/locale/app_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppLocaleController extends Notifier<String?> {
+  var _alive = true;
+
   @override
   String? build() {
+    _alive = true;
+    ref.onDispose(() => _alive = false);
     Future<void>.microtask(_hydrate);
     return null;
   }
@@ -12,7 +16,7 @@ class AppLocaleController extends Notifier<String?> {
   Future<void> _hydrate() async {
     try {
       final saved = await ref.read(localeStoreProvider).load();
-      if (!ref.mounted) return;
+      if (!_alive) return;
       if (saved != null && AppLocales.isSupported(saved)) {
         state = saved;
       }
