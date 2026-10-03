@@ -31,6 +31,19 @@ Un feature no importa a otro. Contratos compartidos: `DocumentSummary`, `FolderS
 
 Clave de objeto: `{user_id}/{document_id}/{backup_id}.bin`
 
+## Publicidad (AdMob, solo banner)
+
+Docxan solo usa **un banner anchored adaptive** en `MainShell`, encima de la barra inferior, en Inicio, Carpetas, Buscar y Ajustes. No aparece en Escanear/edición ni en el documento/OCR. Ningún otro formato (interstitial, rewarded, app open, native, collapsible).
+
+Código: `app/lib/core/ads/` (`AdConfig`, `AdService`, `widgets/docxan_banner_ad.dart`). Por defecto usa los IDs oficiales de prueba de Google.
+
+Para producción:
+
+- **App ID** (`ca-app-pub-…~…`): `ADMOB_APP_ID` como propiedad Gradle (`app/android/gradle.properties` o `flutter build apk --flavor prod -PADMOB_APP_ID=…`). Lo lee `manifestPlaceholders["admobAppId"]`.
+- **Banner Ad Unit ID** (`ca-app-pub-…/…`): `ADMOB_ANDROID_BANNER_AD_UNIT_ID` en `app/env.json` (`--dart-define-from-file`).
+- **Consentimiento:** integrar Google UMP antes de publicar si la audiencia/regiones lo exigen (pendiente, ver TODO en `AdService`).
+- Nada de AdMob vive en Supabase.
+
 ## Flavors
 
 | Flavor | applicationId        | entrypoint          |

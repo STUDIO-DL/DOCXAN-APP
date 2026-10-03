@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:docxan/app/app.dart';
 import 'package:docxan/app/flavor.dart';
+import 'package:docxan/core/ads/ad_service.dart';
 import 'package:docxan/core/database/app_database.dart';
 import 'package:docxan/core/logging/app_logger.dart';
 import 'package:docxan/core/network/docxan_supabase.dart';
@@ -12,6 +15,7 @@ Future<void> bootstrap(FlavorConfig flavor) async {
   AppLogger.init(flavor);
   await DocxanSupabase.initialize(flavor);
   await PushNotifications.initialize();
+  unawaited(AdService.initialize());
   final database = await AppDatabase.open();
   runApp(
     ProviderScope(

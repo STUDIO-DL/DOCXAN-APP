@@ -1,5 +1,7 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/core/ads/ad_config.dart';
+import 'package:docxan/core/ads/widgets/docxan_banner_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,58 +10,68 @@ class MainShell extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
+  static const _scanBranch = 2;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final showBanner =
+        AdConfig.adsEnabled && navigationShell.currentIndex != _scanBranch;
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: DocxanColors.paper,
-          border: Border(top: BorderSide(color: DocxanColors.hairline)),
-        ),
-        child: SafeArea(
-          child: SizedBox(
-            height: 72,
-            child: Row(
-              children: [
-                _NavItem(
-                  icon: Icons.home_outlined,
-                  selectedIcon: Icons.home_rounded,
-                  label: l10n.home,
-                  selected: navigationShell.currentIndex == 0,
-                  onTap: () => navigationShell.goBranch(0),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showBanner) const DocxanBannerAd(),
+          DecoratedBox(
+            decoration: const BoxDecoration(
+              color: DocxanColors.paper,
+              border: Border(top: BorderSide(color: DocxanColors.hairline)),
+            ),
+            child: SafeArea(
+              child: SizedBox(
+                height: 72,
+                child: Row(
+                  children: [
+                    _NavItem(
+                      icon: Icons.home_outlined,
+                      selectedIcon: Icons.home_rounded,
+                      label: l10n.home,
+                      selected: navigationShell.currentIndex == 0,
+                      onTap: () => navigationShell.goBranch(0),
+                    ),
+                    _NavItem(
+                      icon: Icons.folder_outlined,
+                      selectedIcon: Icons.folder_rounded,
+                      label: l10n.folders,
+                      selected: navigationShell.currentIndex == 1,
+                      onTap: () => navigationShell.goBranch(1),
+                    ),
+                    _ScanItem(
+                      label: l10n.scan,
+                      selected: navigationShell.currentIndex == _scanBranch,
+                      onTap: () => navigationShell.goBranch(_scanBranch),
+                    ),
+                    _NavItem(
+                      icon: Icons.search,
+                      selectedIcon: Icons.search_rounded,
+                      label: l10n.searchTab,
+                      selected: navigationShell.currentIndex == 3,
+                      onTap: () => navigationShell.goBranch(3),
+                    ),
+                    _NavItem(
+                      icon: Icons.settings_outlined,
+                      selectedIcon: Icons.settings_rounded,
+                      label: l10n.settings,
+                      selected: navigationShell.currentIndex == 4,
+                      onTap: () => navigationShell.goBranch(4),
+                    ),
+                  ],
                 ),
-                _NavItem(
-                  icon: Icons.folder_outlined,
-                  selectedIcon: Icons.folder_rounded,
-                  label: l10n.folders,
-                  selected: navigationShell.currentIndex == 1,
-                  onTap: () => navigationShell.goBranch(1),
-                ),
-                _ScanItem(
-                  label: l10n.scan,
-                  selected: navigationShell.currentIndex == 2,
-                  onTap: () => navigationShell.goBranch(2),
-                ),
-                _NavItem(
-                  icon: Icons.search,
-                  selectedIcon: Icons.search_rounded,
-                  label: l10n.searchTab,
-                  selected: navigationShell.currentIndex == 3,
-                  onTap: () => navigationShell.goBranch(3),
-                ),
-                _NavItem(
-                  icon: Icons.settings_outlined,
-                  selectedIcon: Icons.settings_rounded,
-                  label: l10n.settings,
-                  selected: navigationShell.currentIndex == 4,
-                  onTap: () => navigationShell.goBranch(4),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

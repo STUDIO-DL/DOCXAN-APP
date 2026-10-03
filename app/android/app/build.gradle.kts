@@ -24,6 +24,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Real AdMob App ID: pass -PADMOB_APP_ID=ca-app-pub-xxx~yyy or set it in
+        // gradle.properties. Default is Google's official test App ID.
+        manifestPlaceholders["admobAppId"] =
+            (project.findProperty("ADMOB_APP_ID") as String?)
+                ?: "ca-app-pub-3940256099942544~3347511713"
     }
 
     buildFeatures {
