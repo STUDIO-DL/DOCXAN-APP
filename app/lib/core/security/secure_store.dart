@@ -64,6 +64,7 @@ class FlutterSecureStore implements SecureStore {
 
 abstract final class SecureKeys {
   static const pinHash = 'doxan.pin_hash';
+  static const pinAttempts = 'doxan.pin_attempts';
 }
 
 final secureStoreProvider = Provider<SecureStore>((ref) {

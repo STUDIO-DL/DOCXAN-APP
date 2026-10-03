@@ -1,9 +1,14 @@
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:docxan/core/debug/agent_log.dart';
 import 'package:docxan/core/imaging/crop_quad.dart';
 import 'package:docxan/core/logging/app_logger.dart';
 import 'package:image/image.dart' as img;
+
+// #region agent log
+var _agentLogTick = 0;
+// #endregion
 
 /// Finds a document quadrilateral (not just an axis-aligned box).
 CropQuad detectDocumentQuad(img.Image source) {
@@ -42,8 +47,14 @@ CropQuad detectDocumentQuad(img.Image source) {
     paper = _countTrue(mask);
     area = paper / count;
   }
+  // #region agent log
+  if (_agentLogTick++ % 8 == 0) agentLog('C', 'edge_detect.dart:mask', 'paper mask', {'area': area, 'paper': paper, 'threshold': threshold, 'mean': mean, 'minL': minL, 'maxL': maxL, 'path': (paper < 40 || area < 0.10 || area > 0.94) ? 'gradient' : 'mask', 'w': width, 'h': height});
+  // #endregion
   if (paper < 40 || area < 0.10 || area > 0.94) {
     final fromEdges = _quadFromGradient(lum, width, height);
+    // #region agent log
+    agentLog('D', 'edge_detect.dart:gradient', 'gradient fallback', {'found': fromEdges != null, 'detected': fromEdges != null && fromEdges != CropQuad.inset});
+    // #endregion
     return fromEdges ?? CropQuad.inset;
   }
 
@@ -104,7 +115,7 @@ List<bool> _paperMask(
   for (var y = 1; y < height - 1; y++) {
     for (var x = 1; x < width - 1; x++) {
       final i = y * width + x;
-      final adaptive = math.max(threshold, blurred[i] + 8);
+      final adaptive = math.max(threshold, blurred[i] - 8);
       if (lum[i] >= adaptive) mask[i] = true;
     }
   }

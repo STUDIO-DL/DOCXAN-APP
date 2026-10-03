@@ -16,6 +16,10 @@
 .idea/
 *.swp
 
+# Supabase CLI / JVM crash dumps
+supabase/.temp/
+hs_err_pid*.log
+
 # OS
 .DS_Store
 Thumbs.db

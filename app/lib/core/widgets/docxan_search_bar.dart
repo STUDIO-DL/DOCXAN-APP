@@ -1,4 +1,4 @@
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class DocxanSearchBar extends StatelessWidget {
@@ -19,23 +19,24 @@ class DocxanSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     final field = Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: DocxanColors.chip,
+        color: palette.chip,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         children: [
-          const Icon(Icons.search, color: DocxanColors.inkMuted, size: 22),
+          Icon(Icons.search, color: palette.inkMuted, size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: onTap != null
                 ? Text(
                     hint,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: DocxanColors.inkMuted,
+                      color: palette.inkMuted,
                     ),
                   )
                 : TextField(

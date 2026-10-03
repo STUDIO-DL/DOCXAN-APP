@@ -3,6 +3,8 @@ import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
+import 'package:docxan/core/debug/agent_log.dart';
 import 'package:docxan/core/imaging/crop_quad.dart';
 import 'package:docxan/core/imaging/edge_detect.dart';
 import 'package:docxan/core/logging/app_logger.dart';
@@ -36,12 +38,17 @@ class _CapturePageState extends ConsumerState<CapturePage>
   CropQuad? _liveQuad;
   DateTime _lastDetectAt = DateTime.fromMillisecondsSinceEpoch(0);
   int _stableHits = 0;
+  bool _visible = false;
+  bool _foreground = true;
+  bool _opening = false;
 
   @override
   void initState() {
     super.initState();
+    // #region agent log
+    agentLog('B', 'capture_page.dart:initState', 'capture mounted', {'id': identityHashCode(this)});
+    // #endregion
     WidgetsBinding.instance.addObserver(this);
-    _openCamera();
     Future<void>.delayed(const Duration(milliseconds: 2600), () {
       if (mounted) setState(() => _showTips = false);
     });
@@ -49,6 +56,9 @@ class _CapturePageState extends ConsumerState<CapturePage>
 
   @override
   void dispose() {
+    // #region agent log
+    agentLog('B', 'capture_page.dart:dispose', 'capture disposed', {'id': identityHashCode(this)});
+    // #endregion
     WidgetsBinding.instance.removeObserver(this);
     _stopStream();
     _camera?.dispose();
@@ -56,18 +66,62 @@ class _CapturePageState extends ConsumerState<CapturePage>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final visible = TickerMode.of(context) &&
+        (ModalRoute.of(context)?.isCurrent ?? true);
+    if (visible == _visible) return;
+    _visible = visible;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _syncCamera());
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final camera = _camera;
-    if (camera == null || !camera.value.isInitialized) return;
-    if (state == AppLifecycleState.inactive) {
-      camera.dispose();
-      _camera = null;
-    } else if (state == AppLifecycleState.resumed) {
-      _openCamera();
+    // #region agent log
+    agentLog('A', 'capture_page.dart:lifecycle', 'lifecycle', {'state': state.name, 'cameraNull': camera == null, 'initialized': camera?.value.isInitialized, 'visible': _visible, 'id': identityHashCode(this)});
+    // #endregion
+    if (state == AppLifecycleState.resumed) {
+      _foreground = true;
+      _syncCamera();
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      _foreground = false;
+      _syncCamera();
     }
   }
 
+  void _syncCamera() {
+    if (!mounted) return;
+    // #region agent log
+    agentLog('B', 'capture_page.dart:_syncCamera', 'sync camera', {'visible': _visible, 'foreground': _foreground, 'hasCamera': _camera != null, 'opening': _opening, 'id': identityHashCode(this)});
+    // #endregion
+    if (_visible && _foreground) {
+      if (_camera == null && !_opening) _openCamera();
+    } else {
+      _releaseCamera();
+    }
+  }
+
+  Future<void> _releaseCamera() async {
+    final camera = _camera;
+    if (camera == null) return;
+    _camera = null;
+    _stableHits = 0;
+    _liveQuad = null;
+    _documentReady = false;
+    if (mounted) setState(() {});
+    try {
+      if (camera.value.isStreamingImages) await camera.stopImageStream();
+    } catch (error) {
+      AppLogger.debug('Stop stream skipped: $error');
+    }
+    await camera.dispose();
+  }
+
   Future<void> _openCamera() async {
+    _opening = true;
     setState(() => _error = null);
     try {
       final cameras = await availableCameras();
@@ -101,7 +155,7 @@ class _CapturePageState extends ConsumerState<CapturePage>
         );
         await controller.initialize();
       }
-      if (!mounted) {
+      if (!mounted || !_visible || !_foreground) {
         await controller.dispose();
         return;
       }
@@ -113,6 +167,9 @@ class _CapturePageState extends ConsumerState<CapturePage>
       if (mounted) {
         setState(() => _error = 'denied');
       }
+    } finally {
+      _opening = false;
+      if (mounted && _camera == null && _error == null) _syncCamera();
     }
   }
 
@@ -139,10 +196,14 @@ class _CapturePageState extends ConsumerState<CapturePage>
       path,
       'capture_${DateTime.now().microsecondsSinceEpoch}.jpg',
     );
+    await store.deleteTempFile(path);
     final auto = ref.read(scanSessionProvider).captureMode == CaptureMode.auto;
     final crop = preferred != null && preferred != CropQuad.inset
         ? preferred
-        : (auto ? detectDocumentQuadFromFile(persisted) : CropQuad.inset);
+        : (auto
+              ? await compute(detectDocumentQuadFromFile, persisted)
+              : CropQuad.inset);
+    if (!mounted) return;
     ref.read(scanSessionProvider.notifier).addPage(persisted, crop: crop);
     if (!mounted) return;
     context.go(AppRoutes.scanEdit);
@@ -168,7 +229,7 @@ class _CapturePageState extends ConsumerState<CapturePage>
   }
 
   void _onCameraImage(CameraImage image) {
-    if (_busy || !mounted) return;
+    if (_busy || _capturing || !mounted || !_visible) return;
     final now = DateTime.now();
     if (now.difference(_lastDetectAt) < const Duration(milliseconds: 280)) {
       return;
@@ -234,6 +295,9 @@ class _CapturePageState extends ConsumerState<CapturePage>
 
   Future<void> _takePicture() async {
     final camera = _camera;
+    // #region agent log
+    agentLog('B', 'capture_page.dart:_takePicture', 'take picture', {'id': identityHashCode(this), 'route': GoRouter.of(context).routeInformationProvider.value.uri.toString(), 'stableHits': _stableHits, 'capturing': _capturing, 'busy': _busy});
+    // #endregion
     if (_capturing || camera == null || !camera.value.isInitialized) return;
     _capturing = true;
     _busy = true;
@@ -256,6 +320,9 @@ class _CapturePageState extends ConsumerState<CapturePage>
       }
     } finally {
       _capturing = false;
+      _stableHits = 0;
+      _liveQuad = null;
+      _documentReady = false;
       if (mounted) {
         setState(() => _busy = false);
         if (!captured) {
@@ -284,7 +351,10 @@ class _CapturePageState extends ConsumerState<CapturePage>
     } catch (error) {
       AppLogger.debug('Gallery failed: $error');
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) {
+        ref.read(sessionProvider.notifier).clearIgnoreNextLock();
+        setState(() => _busy = false);
+      }
     }
   }
 
@@ -300,7 +370,7 @@ class _CapturePageState extends ConsumerState<CapturePage>
     final ready = camera != null && camera.value.isInitialized;
 
     return Scaffold(
-      backgroundColor: DocxanColors.paper,
+      backgroundColor: context.palette.paper,
       body: SafeArea(
         child: Column(
           children: [
@@ -349,7 +419,7 @@ class _CapturePageState extends ConsumerState<CapturePage>
                                     child: FittedBox(
                                       fit: BoxFit.cover,
                                       child: SizedBox(
-                                        width: camera.value.previewSize?.height ?? 3,
+                                        width: camera!.value.previewSize?.height ?? 3,
                                         height: camera.value.previewSize?.width ?? 4,
                                         child: CameraPreview(camera),
                                       ),
@@ -369,6 +439,9 @@ class _CapturePageState extends ConsumerState<CapturePage>
                                               ? l10n.cameraPermissionDenied
                                               : l10n.cameraUnavailable,
                                           textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            color: DocxanColors.ink,
+                                          ),
                                         ),
                                       ),
                               ),
@@ -497,14 +570,14 @@ class _RoundAction extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: selected ? DocxanColors.accent : DocxanColors.ink,
+              color: selected ? context.palette.accent : context.palette.ink,
             ),
             const SizedBox(height: 6),
             Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 12,
-                color: DocxanColors.ink,
+                color: context.palette.ink,
               ),
             ),
           ],
@@ -534,7 +607,7 @@ class _ModeSwitch extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: DocxanColors.canvas,
+        color: context.palette.canvas,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
@@ -567,7 +640,7 @@ class _ModeChip extends StatelessWidget {
         duration: const Duration(milliseconds: 160),
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? DocxanColors.paper : Colors.transparent,
+          color: selected ? context.palette.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(999),
           boxShadow: selected
               ? const [
@@ -583,7 +656,7 @@ class _ModeChip extends StatelessWidget {
           label,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: selected ? DocxanColors.ink : DocxanColors.inkMuted,
+            color: selected ? context.palette.ink : context.palette.inkMuted,
           ),
         ),
       ),

@@ -162,6 +162,12 @@
   "pinConfirmSubtitle": "Vuelve a introducir el mismo PIN para confirmarlo.",
   "pinMismatch": "Los PIN no coinciden. Inténtalo de nuevo.",
   "pinWrong": "PIN incorrecto",
+  "pinTooManyAttempts": "Demasiados intentos. Inténtalo de nuevo en {seconds} s",
+  "@pinTooManyAttempts": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
   "pinCurrentTitle": "PIN actual",
   "changePin": "Cambiar PIN",
   "pinChanged": "PIN actualizado",

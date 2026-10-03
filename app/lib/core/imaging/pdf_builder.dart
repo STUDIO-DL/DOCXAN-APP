@@ -15,7 +15,7 @@ Future<Uint8List> buildPdfIsolate(List<Uint8List> pages) async {
         build: (context) {
           return pw.Image(
             image,
-            fit: pw.BoxFit.cover,
+            fit: pw.BoxFit.contain,
             width: PdfPageFormat.a4.width,
             height: PdfPageFormat.a4.height,
           );

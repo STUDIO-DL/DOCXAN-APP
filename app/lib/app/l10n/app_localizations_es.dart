@@ -484,6 +484,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pinWrong => 'PIN incorrecto';
 
   @override
+  String pinTooManyAttempts(int seconds) {
+    return 'Demasiados intentos. Inténtalo de nuevo en $seconds s';
+  }
+
+  @override
   String get pinCurrentTitle => 'PIN actual';
 
   @override

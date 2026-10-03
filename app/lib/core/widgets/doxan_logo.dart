@@ -1,4 +1,4 @@
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class DoxanLogo extends StatelessWidget {
@@ -12,11 +12,14 @@ class DoxanLogo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(
-          'assets/images/logo.png',
-          height: size,
-          filterQuality: FilterQuality.high,
-          semanticLabel: 'Docxan',
+        ClipRRect(
+          borderRadius: BorderRadius.circular(size * 0.12),
+          child: Image.asset(
+            'assets/images/logo.png',
+            height: size,
+            filterQuality: FilterQuality.high,
+            semanticLabel: 'Docxan',
+          ),
         ),
         if (showWordmark) ...[
           const SizedBox(height: 8),
@@ -25,7 +28,7 @@ class DoxanLogo extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w700,
               letterSpacing: -0.8,
-              color: DocxanColors.ink,
+              color: context.palette.ink,
             ),
           ),
         ],

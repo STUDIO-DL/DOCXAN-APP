@@ -1,4 +1,4 @@
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class DoxanAppHeader extends StatelessWidget {
@@ -12,11 +12,14 @@ class DoxanAppHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 8, 8, 8),
       child: Row(
         children: [
-          Image.asset(
-            'assets/images/logo_docxan.png',
-            height: 28,
-            filterQuality: FilterQuality.high,
-            semanticLabel: 'Docxan',
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: Image.asset(
+              'assets/images/logo_docxan.png',
+              height: 28,
+              filterQuality: FilterQuality.high,
+              semanticLabel: 'Docxan',
+            ),
           ),
           const SizedBox(width: 10),
           Text(
@@ -30,7 +33,7 @@ class DoxanAppHeader extends StatelessWidget {
           IconButton(
             onPressed: onProfile,
             icon: const Icon(Icons.account_circle_outlined),
-            color: DocxanColors.ink,
+            color: context.palette.ink,
           ),
         ],
       ),

@@ -143,3 +143,24 @@ Los tokens S3 de Cloudflare van en **Edge Function secrets**, no en `env.json`:
 Despliega `supabase/functions/backup-signed-url` y ejecuta también
 `supabase/migrations/20260919120000_documents_library.sql` (añade
 `deleted_at`, `page_count`, `is_favorite`).
+
+## 6. Clave de servidor de backups y rate limit
+
+Los backups nuevos (formato DXN2) combinan el PIN con una clave por usuario
+que deriva la Edge Function a partir de un secreto maestro:
+
+- `BACKUP_PEPPER_SECRET` — aleatorio, ≥ 32 caracteres, distinto en dev y prod.
+  **No lo pierdas ni lo cambies**: sin él no se pueden descifrar los backups DXN2.
+  Guarda una copia fuera de Supabase.
+
+```bash
+supabase secrets set BACKUP_PEPPER_SECRET="$(openssl rand -base64 48)"
+supabase db push                       # aplica 20261003120000_rate_limits.sql
+supabase functions deploy backup-signed-url
+```
+
+La migración crea `public.rate_limits` (RLS sin políticas) y
+`public.rate_limit_hit(...)` (`security definer`, solo `service_role`). La
+función limita a 300 URLs firmadas y 10 peticiones de clave por usuario cada
+10 minutos (`429` + `Retry-After`), y las subidas a 50 MiB (tamaño firmado en
+la URL). Detalles en `supabase/functions/backup-signed-url/README.md`.

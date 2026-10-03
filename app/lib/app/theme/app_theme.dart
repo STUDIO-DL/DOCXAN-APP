@@ -1,4 +1,5 @@
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/app/theme/typography.dart';
 import 'package:flutter/material.dart';
 
@@ -12,57 +13,101 @@ abstract final class DocxanTheme {
       onSurface: DocxanColors.ink,
       error: DocxanColors.danger,
     );
+    return _build(
+      palette: DocxanPalette.light,
+      scheme: scheme,
+      brightness: Brightness.light,
+    );
+  }
+
+  static ThemeData dark() {
+    const p = DocxanPalette.dark;
+    final scheme = ColorScheme.dark(
+      primary: p.accent,
+      onPrimary: p.onAccent,
+      primaryContainer: p.accentSoft,
+      onPrimaryContainer: p.ink,
+      secondary: p.inkMuted,
+      onSecondary: p.paper,
+      surface: p.paper,
+      onSurface: p.ink,
+      onSurfaceVariant: p.inkMuted,
+      surfaceContainerLowest: p.paper,
+      surfaceContainerLow: p.surface,
+      surfaceContainer: p.surface,
+      surfaceContainerHigh: p.surface,
+      surfaceContainerHighest: p.chip,
+      outline: const Color(0xFF4B5563),
+      outlineVariant: p.hairline,
+      error: p.danger,
+      onError: const Color(0xFF450A0A),
+      inverseSurface: p.ink,
+      onInverseSurface: p.paper,
+      inversePrimary: DocxanColors.accent,
+    );
+    return _build(palette: p, scheme: scheme, brightness: Brightness.dark);
+  }
+
+  static ThemeData _build({
+    required DocxanPalette palette,
+    required ColorScheme scheme,
+    required Brightness brightness,
+  }) {
+    final p = palette;
+    final isDark = brightness == Brightness.dark;
 
     final base = ThemeData(
       useMaterial3: true,
+      brightness: brightness,
       colorScheme: scheme,
-      scaffoldBackgroundColor: DocxanColors.paper,
+      scaffoldBackgroundColor: p.paper,
       visualDensity: VisualDensity.standard,
+      extensions: <ThemeExtension<dynamic>>[p],
     );
 
-    return base.copyWith(
-      textTheme: DocxanTypography.textTheme(base.textTheme),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: DocxanColors.canvas,
-        foregroundColor: DocxanColors.ink,
+    final themed = base.copyWith(
+      textTheme: DocxanTypography.textTheme(base.textTheme, palette: p),
+      appBarTheme: AppBarTheme(
+        backgroundColor: p.canvas,
+        foregroundColor: p.ink,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: DocxanColors.paper,
-        indicatorColor: DocxanColors.chip,
+        backgroundColor: p.paper,
+        indicatorColor: p.chip,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
             fontSize: 12,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            color: selected ? DocxanColors.ink : DocxanColors.inkMuted,
+            color: selected ? p.ink : p.inkMuted,
           );
         }),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: DocxanColors.paper,
+        fillColor: p.paper,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: DocxanColors.hairline),
+          borderSide: BorderSide(color: p.hairline),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: DocxanColors.hairline),
+          borderSide: BorderSide(color: p.hairline),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: DocxanColors.ink, width: 1.4),
+          borderSide: BorderSide(color: p.ink, width: 1.4),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: DocxanColors.accent,
-          foregroundColor: DocxanColors.paper,
+          backgroundColor: p.accent,
+          foregroundColor: p.onAccent,
           minimumSize: const Size.fromHeight(52),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
@@ -70,78 +115,76 @@ abstract final class DocxanTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: DocxanColors.ink,
+          foregroundColor: p.ink,
           minimumSize: const Size.fromHeight(52),
-          side: const BorderSide(color: DocxanColors.hairline),
+          side: BorderSide(color: p.hairline),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
       ),
-      dividerColor: DocxanColors.hairline,
-      sliderTheme: const SliderThemeData(
-        activeTrackColor: DocxanColors.accent,
-        inactiveTrackColor: DocxanColors.hairline,
-        thumbColor: DocxanColors.paper,
-        overlayColor: Color(0x2216A34A),
+      dividerColor: p.hairline,
+      sliderTheme: SliderThemeData(
+        activeTrackColor: p.accent,
+        inactiveTrackColor: p.hairline,
+        thumbColor: isDark ? p.ink : p.paper,
+        overlayColor: const Color(0x2216A34A),
         trackHeight: 4,
-        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10),
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
       ),
     );
-  }
 
-  static ThemeData dark() {
-    const ink = Color(0xFFF9FAFB);
-    const muted = Color(0xFF9CA3AF);
-    const surface = Color(0xFF111827);
-    const canvas = Color(0xFF1F2937);
-    const hairline = Color(0xFF374151);
-    const scheme = ColorScheme.dark(
-      primary: DocxanColors.accent,
-      onPrimary: Color(0xFF052E16),
-      secondary: muted,
-      surface: surface,
-      onSurface: ink,
-      error: Color(0xFFF87171),
-    );
-    final base = ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: scheme,
-      scaffoldBackgroundColor: surface,
-      visualDensity: VisualDensity.standard,
-    );
-    return base.copyWith(
-      textTheme: DocxanTypography.textTheme(base.textTheme).apply(
-        bodyColor: ink,
-        displayColor: ink,
+    if (!isDark) return themed;
+
+    // Light relies on Material 3 defaults (which already resolve to white
+    // surfaces); dark pins every elevated surface so nothing falls back to
+    // light-only colors.
+    return themed.copyWith(
+      canvasColor: p.paper,
+      cardColor: p.surface,
+      dialogTheme: DialogThemeData(
+        backgroundColor: p.surface,
+        surfaceTintColor: Colors.transparent,
+        titleTextStyle: themed.textTheme.titleLarge,
+        contentTextStyle: themed.textTheme.bodyMedium,
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: canvas,
-        foregroundColor: ink,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: p.surface,
+        modalBackgroundColor: p.surface,
+        surfaceTintColor: Colors.transparent,
+        dragHandleColor: p.hairline,
       ),
-      navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: surface,
-        indicatorColor: hairline,
-        elevation: 0,
+      cardTheme: CardThemeData(
+        color: p.surface,
+        surfaceTintColor: Colors.transparent,
       ),
-      dividerColor: hairline,
-      sliderTheme: const SliderThemeData(
-        activeTrackColor: DocxanColors.accent,
-        inactiveTrackColor: hairline,
-        thumbColor: ink,
-        overlayColor: Color(0x2216A34A),
-        trackHeight: 4,
-        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10),
+      popupMenuTheme: PopupMenuThemeData(
+        color: p.surface,
+        surfaceTintColor: Colors.transparent,
       ),
-      filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          backgroundColor: DocxanColors.accent,
-          foregroundColor: const Color(0xFF052E16),
-          minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      chipTheme: ChipThemeData(
+        backgroundColor: p.chip,
+        selectedColor: p.accentSoft,
+        side: BorderSide(color: p.hairline),
+        labelStyle: themed.textTheme.labelLarge?.copyWith(color: p.ink),
+        secondaryLabelStyle:
+            themed.textTheme.labelLarge?.copyWith(color: p.ink),
+      ),
+      dividerTheme: DividerThemeData(color: p.hairline),
+      progressIndicatorTheme: ProgressIndicatorThemeData(color: p.accent),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? p.onAccent
+              : p.inkMuted,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected) ? p.accent : p.chip,
+        ),
+        trackOutlineColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? Colors.transparent
+              : p.hairline,
         ),
       ),
     );

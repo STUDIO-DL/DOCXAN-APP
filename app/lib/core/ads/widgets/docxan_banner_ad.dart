@@ -1,4 +1,4 @@
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/ads/ad_config.dart';
 import 'package:docxan/core/ads/ad_service.dart';
 import 'package:docxan/core/logging/app_logger.dart';
@@ -85,10 +85,11 @@ class _DocxanBannerAdState extends State<DocxanBannerAd> {
   Widget build(BuildContext context) {
     final ad = _ad;
     if (!_loaded || ad == null) return const SizedBox.shrink();
+    final palette = context.palette;
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: DocxanColors.paper,
-        border: Border(top: BorderSide(color: DocxanColors.hairline)),
+      decoration: BoxDecoration(
+        color: palette.paper,
+        border: Border(top: BorderSide(color: palette.hairline)),
       ),
       child: Center(
         heightFactor: 1,

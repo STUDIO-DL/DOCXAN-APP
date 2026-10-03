@@ -1,4 +1,5 @@
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/constants/app_constants.dart';
 import 'package:docxan/core/data/user_settings_repository.dart';
 import 'package:docxan/core/session/session_controller.dart';
@@ -40,9 +41,18 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    // The splash stays on white in both modes: the logo asset has an opaque
+    // white background.
+    return Scaffold(
       backgroundColor: DocxanColors.paper,
-      body: Center(child: DocxanLogo(size: 220)),
+      body: Center(
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            extensions: const <ThemeExtension<dynamic>>[DocxanPalette.light],
+          ),
+          child: const DocxanLogo(size: 220),
+        ),
+      ),
     );
   }
 }

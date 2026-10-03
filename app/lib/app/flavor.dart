@@ -20,7 +20,6 @@ class FlavorConfig {
 
   bool get isDev => flavor == AppFlavor.dev;
   bool get isGoogleConfigured => backend.isGoogleConfigured;
-  bool get isR2Configured => backend.isR2Configured;
 
   static const dev = FlavorConfig(
     flavor: AppFlavor.dev,

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:docxan/core/imaging/crop_quad.dart';
+import 'package:docxan/core/storage/local_file_store.dart';
 import 'package:docxan/features/scan/presentation/states/scan_session_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +20,7 @@ class ScanSessionController extends Notifier<ScanSessionState> {
       final index = state.currentIndex.clamp(0, state.pages.length - 1);
       final pages = [...state.pages];
       final previous = pages[index];
+      if (previous.path != path) _discardFile(previous.path);
       pages[index] = previous.copyWith(
         path: path,
         crop: crop ?? CropQuad.inset,
@@ -63,6 +67,7 @@ class ScanSessionController extends Notifier<ScanSessionState> {
 
   void removePageAt(int index) {
     if (index < 0 || index >= state.pages.length) return;
+    _discardFile(state.pages[index].path);
     final pages = [...state.pages]..removeAt(index);
     final nextIndex = pages.isEmpty ? 0 : index.clamp(0, pages.length - 1);
     state = state.copyWith(pages: pages, currentIndex: nextIndex);
@@ -121,8 +126,16 @@ class ScanSessionController extends Notifier<ScanSessionState> {
     state = state.copyWith(flashOn: value);
   }
 
+  /// Ends the session and deletes its plaintext page captures.
   void clear() {
+    for (final page in state.pages) {
+      _discardFile(page.path);
+    }
     state = const ScanSessionState();
+  }
+
+  void _discardFile(String path) {
+    unawaited(ref.read(localFileStoreProvider).deleteTempFile(path));
   }
 }
 

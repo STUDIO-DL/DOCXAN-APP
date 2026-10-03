@@ -50,11 +50,14 @@ class ScanExportService {
 
       onProgress?.call('ocr');
       var text = '';
+      String? ocrPath;
       try {
-        final ocrPath = await fileStore.writeCacheBytes('ocr_$i.jpg', jpeg);
+        ocrPath = await fileStore.writeCacheBytes('ocr_$i.jpg', jpeg);
         text = await ocr.recognize(ocrPath);
       } catch (error) {
         AppLogger.debug('OCR page $i skipped: $error');
+      } finally {
+        if (ocrPath != null) await fileStore.deleteTempFile(ocrPath);
       }
       ocrParts.add(text);
     }

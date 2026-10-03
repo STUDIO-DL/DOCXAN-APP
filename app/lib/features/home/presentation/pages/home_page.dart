@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/library_collections.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
@@ -37,7 +37,7 @@ class HomePage extends ConsumerWidget {
     );
 
     return Scaffold(
-      backgroundColor: DocxanColors.paper,
+      backgroundColor: context.palette.paper,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
@@ -190,7 +190,7 @@ class _GuestBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: DocxanColors.chip,
+        color: context.palette.chip,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
@@ -212,17 +212,18 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: DocxanColors.paper,
+        color: palette.paper,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: DocxanColors.hairline),
+        border: Border.all(color: palette.hairline),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: DocxanColors.inkMuted),
+          Icon(icon, size: 16, color: palette.inkMuted),
           const SizedBox(width: 6),
           Text(label, style: Theme.of(context).textTheme.bodyMedium),
         ],
@@ -246,6 +247,7 @@ class _DocumentTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final preview = previewPath;
     final hasPreview = preview != null && File(preview).existsSync();
+    final palette = context.palette;
     return ListTile(
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
@@ -253,14 +255,14 @@ class _DocumentTile extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: DocxanColors.paper,
+          color: palette.paper,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: DocxanColors.hairline),
+          border: Border.all(color: palette.hairline),
         ),
         clipBehavior: Clip.antiAlias,
         child: hasPreview
             ? Image.file(File(preview), fit: BoxFit.cover)
-            : const Icon(Icons.description_outlined, color: DocxanColors.ink),
+            : Icon(Icons.description_outlined, color: palette.ink),
       ),
       title: Text(document.name),
       subtitle: Text(

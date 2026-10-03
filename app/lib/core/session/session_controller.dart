@@ -100,6 +100,10 @@ class SessionController extends Notifier<Session> {
     _ignoreNextLock = true;
   }
 
+  void clearIgnoreNextLock() {
+    _ignoreNextLock = false;
+  }
+
   void onAppPaused() {
     _pausedAt = DateTime.now();
   }
