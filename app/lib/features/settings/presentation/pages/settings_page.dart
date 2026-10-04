@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:docxan/app/flavor.dart';
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
@@ -193,6 +195,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(l10n.syncInProgress)));
     final report = await ref.read(syncManagerProvider).synchronize();
+    unawaited(notifySyncResult(l10n, report));
     if (!mounted) return;
     final message = localizedSyncReport(l10n, report);
     ScaffoldMessenger.of(context)

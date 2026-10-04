@@ -5,6 +5,7 @@ import 'package:docxan/core/library/library_ids.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/logging/app_logger.dart';
 import 'package:docxan/core/models/sync_status.dart';
+import 'package:docxan/core/notifications/push_notifications.dart';
 import 'package:docxan/core/security/backup_crypto.dart';
 import 'package:docxan/core/security/pin_service.dart';
 import 'package:docxan/core/session/session_controller.dart';
@@ -50,6 +51,15 @@ String localizedSyncReport(AppLocalizations l10n, SyncReport report) {
   };
 }
 
+/// Avisa al resto de dispositivos del usuario cuando una copia llega a R2.
+Future<void> notifySyncResult(AppLocalizations l10n, SyncReport report) async {
+  if (report.uploaded == 0) return;
+  await PushNotifications.sendToMyDevices(
+    title: l10n.backup,
+    body: localizedSyncReport(l10n, report),
+  );
+}
+
 class SyncManager {
   SyncManager(this._ref);
 
@@ -83,7 +93,7 @@ class SyncManager {
     }
 
     final queue = _ref.read(syncQueueProvider);
-    final jobs = await queue.pending();
+    final jobs = await queue.pending(ignoreBackoff: true);
     if (jobs.isEmpty) {
       return const SyncReport(
         status: SyncRunStatus.success,

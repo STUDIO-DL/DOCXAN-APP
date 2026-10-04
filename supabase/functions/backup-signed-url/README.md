@@ -9,7 +9,8 @@ En Supabase → Edge Functions → Secrets:
 - `R2_ACCOUNT_ID`
 - `R2_ACCESS_KEY_ID`
 - `R2_SECRET_ACCESS_KEY`
-- `R2_BUCKET` (`docxan-backups-dev` o `docxan-backups-prod`)
+- `R2_BUCKET` (`doxan-backups-dev` o `doxan-backups-prod`)
+- `R2_JURISDICTION` (`eu`: nuestros buckets se crearon con jurisdicción UE; vacío si no la tienen)
 
 `SUPABASE_URL`, `SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY` ya los inyecta la plataforma.
 

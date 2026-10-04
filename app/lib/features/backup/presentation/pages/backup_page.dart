@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/theme/colors.dart';
 import 'package:docxan/core/data/user_settings_repository.dart';
@@ -34,6 +36,7 @@ class _BackupPageState extends ConsumerState<BackupPage> {
     if (!await _ensurePin(l10n)) return;
     setState(() => _busy = true);
     final report = await ref.read(syncManagerProvider).synchronize();
+    unawaited(notifySyncResult(l10n, report));
     if (!mounted) return;
     setState(() => _busy = false);
     ScaffoldMessenger.of(context).showSnackBar(

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:docxan/core/data/profile_repository.dart';
 import 'package:docxan/core/models/profile.dart';
+import 'package:docxan/core/notifications/push_notifications.dart';
 import 'package:docxan/core/session/session_controller.dart';
 import 'package:docxan/features/auth/domain/entities/auth_user.dart';
 import 'package:docxan/features/auth/presentation/controllers/auth_providers.dart';
@@ -58,6 +59,7 @@ class _AuthSessionBinderState extends ConsumerState<AuthSessionBinder> {
         updatedAt: DateTime.now(),
       ),
     );
+    unawaited(PushNotifications.registerForUser(user.id));
   }
 
   @override

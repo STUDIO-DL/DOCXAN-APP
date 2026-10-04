@@ -36,7 +36,8 @@ class R2StorageService {
     );
     if (response.statusCode >= 300) {
       throw StorageFailure(
-        'No se pudo subir el backup (${response.statusCode}).',
+        'No se pudo subir el backup (${response.statusCode}): '
+        '${_r2ErrorCode(response.body)}',
       );
     }
   }
@@ -77,6 +78,12 @@ class R2StorageService {
 
   static String objectKey(String userId, String documentId, String backupId) {
     return '$userId/$documentId/$backupId.bin';
+  }
+
+  static String _r2ErrorCode(String body) {
+    final code = RegExp('<Code>(.*?)</Code>').firstMatch(body)?.group(1);
+    final message = RegExp('<Message>(.*?)</Message>').firstMatch(body)?.group(1);
+    return [code, message].whereType<String>().join(' - ');
   }
 }
 

@@ -60,6 +60,8 @@ Deno.serve(async (req) => {
   const accessKey = Deno.env.get("R2_ACCESS_KEY_ID") ?? "";
   const secretKey = Deno.env.get("R2_SECRET_ACCESS_KEY") ?? "";
   const bucket = Deno.env.get("R2_BUCKET") ?? "";
+  // Buckets con jurisdicción (p. ej. "eu") viven en <cuenta>.<jurisdicción>.r2...
+  const jurisdiction = (Deno.env.get("R2_JURISDICTION") ?? "").trim().toLowerCase();
   if (!accountId || !accessKey || !secretKey || !bucket) {
     return json(
       {
@@ -102,8 +104,10 @@ Deno.serve(async (req) => {
     region: "auto",
   });
   const expiresIn = 300;
-  const objectUrl =
-    `https://${accountId}.r2.cloudflarestorage.com/${bucket}/${r2Key}`;
+  const host = jurisdiction
+    ? `${accountId}.${jurisdiction}.r2.cloudflarestorage.com`
+    : `${accountId}.r2.cloudflarestorage.com`;
+  const objectUrl = `https://${host}/${bucket}/${r2Key}`;
   const signed = await aws.sign(
     new Request(`${objectUrl}?X-Amz-Expires=${expiresIn}`, { method }),
     { aws: { signQuery: true } },

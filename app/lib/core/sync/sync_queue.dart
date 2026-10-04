@@ -58,7 +58,8 @@ DateTime syncBackoff(int attempts) {
 
 abstract interface class SyncQueue {
   Future<void> enqueue(SyncJob job);
-  Future<List<SyncJob>> pending();
+  /// [ignoreBackoff]: un Sync manual reintenta ya los trabajos fallidos.
+  Future<List<SyncJob>> pending({bool ignoreBackoff = false});
   Future<void> mark(String id, SyncStatus status, {String? error});
   Stream<int> pendingCount();
 }
@@ -77,10 +78,12 @@ class InMemorySyncQueue implements SyncQueue {
   }
 
   @override
-  Future<List<SyncJob>> pending() async {
+  Future<List<SyncJob>> pending({bool ignoreBackoff = false}) async {
     final now = DateTime.now();
     return _jobs.values.where((job) {
-      final due = job.nextRetry == null || !job.nextRetry!.isAfter(now);
+      final due = ignoreBackoff ||
+          job.nextRetry == null ||
+          !job.nextRetry!.isAfter(now);
       return due &&
           (job.status == SyncStatus.pendingUpload ||
               job.status == SyncStatus.failed);
@@ -151,7 +154,7 @@ class DriftSyncQueue implements SyncQueue {
   }
 
   @override
-  Future<List<SyncJob>> pending() async {
+  Future<List<SyncJob>> pending({bool ignoreBackoff = false}) async {
     final now = DateTime.now();
     final rows = await (_db.select(_db.syncQueueItems)..where(
           (row) =>
@@ -161,7 +164,10 @@ class DriftSyncQueue implements SyncQueue {
         .get();
     return [
       for (final row in rows)
-        if (row.nextRetry == null || !row.nextRetry!.isAfter(now)) _fromRow(row),
+        if (ignoreBackoff ||
+            row.nextRetry == null ||
+            !row.nextRetry!.isAfter(now))
+          _fromRow(row),
     ];
   }
 

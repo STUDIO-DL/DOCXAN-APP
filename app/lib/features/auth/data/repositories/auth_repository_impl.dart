@@ -1,5 +1,6 @@
 import 'package:docxan/core/errors/app_failure.dart';
 import 'package:docxan/core/network/docxan_supabase.dart';
+import 'package:docxan/core/notifications/push_notifications.dart';
 import 'package:docxan/features/auth/data/datasources/google_auth_datasource.dart';
 import 'package:docxan/features/auth/domain/entities/auth_user.dart';
 import 'package:docxan/features/auth/domain/repositories/auth_repository.dart';
@@ -94,6 +95,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await _google.signOut();
     }
     if (!DocxanSupabase.isReady) return;
+    await PushNotifications.unregister();
     await DocxanSupabase.client.auth.signOut();
   }
 
