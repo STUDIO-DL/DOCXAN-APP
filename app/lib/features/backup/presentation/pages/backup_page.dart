@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:docxan/app/l10n/app_localizations.dart';
-import 'package:docxan/app/theme/colors.dart';
 import 'package:docxan/core/data/user_settings_repository.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
 import 'package:docxan/core/security/pin_service.dart';
@@ -35,27 +34,31 @@ class _BackupPageState extends ConsumerState<BackupPage> {
     final l10n = AppLocalizations.of(context);
     if (!await _ensurePin(l10n)) return;
     setState(() => _busy = true);
-    final report = await ref.read(syncManagerProvider).synchronize();
-    unawaited(notifySyncResult(l10n, report));
-    if (!mounted) return;
-    setState(() => _busy = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(localizedSyncReport(l10n, report))),
-    );
+    try {
+      final report = await ref.read(syncManagerProvider).synchronize();
+      unawaited(notifySyncResult(l10n, report));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(localizedSyncReport(l10n, report))),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.syncFailed)),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   Future<void> _restore() async {
     final l10n = AppLocalizations.of(context);
+    if (await _showLockoutIfAny(l10n)) return;
+    if (!mounted) return;
     final pin = await _askPin(l10n);
     if (pin == null) return;
-    final ok = await ref.read(pinServiceProvider).verify(pin);
-    if (!ok) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pinWrong)),
-      );
-      return;
-    }
+    if (!await _checkPin(l10n, pin)) return;
+    if (!mounted) return;
     setState(() => _busy = true);
     try {
       final report = await ref.read(syncManagerProvider).restoreFromCloud(pin: pin);
@@ -75,15 +78,41 @@ class _BackupPageState extends ConsumerState<BackupPage> {
 
   Future<bool> _ensurePin(AppLocalizations l10n) async {
     if (ref.read(pinServiceProvider).verifiedPin != null) return true;
+    if (await _showLockoutIfAny(l10n)) return false;
+    if (!mounted) return false;
     final pin = await _askPin(l10n);
     if (pin == null) return false;
-    final ok = await ref.read(pinServiceProvider).verify(pin);
-    if (!ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pinWrong)),
+    return _checkPin(l10n, pin);
+  }
+
+  /// Shows the lockout message and returns true when PIN entry is blocked.
+  Future<bool> _showLockoutIfAny(AppLocalizations l10n) async {
+    final remaining = await ref.read(pinServiceProvider).remainingLockout();
+    if (remaining <= Duration.zero) return false;
+    if (mounted) _showPinMessage(l10n.pinTooManyAttempts(_ceilSeconds(remaining)));
+    return true;
+  }
+
+  Future<bool> _checkPin(AppLocalizations l10n, String pin) async {
+    final result = await ref.read(pinServiceProvider).check(pin);
+    if (!result.ok && mounted) {
+      _showPinMessage(
+        result.lockedOut
+            ? l10n.pinTooManyAttempts(_ceilSeconds(result.lockout))
+            : l10n.pinWrong,
       );
     }
-    return ok;
+    return result.ok;
+  }
+
+  void _showPinMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  static int _ceilSeconds(Duration duration) {
+    return (duration.inMilliseconds / 1000).ceil();
   }
 
   Future<String?> _askPin(AppLocalizations l10n) {
@@ -163,7 +192,9 @@ class _BackupPageState extends ConsumerState<BackupPage> {
               l10n.confirmDeleteDocument,
               style: Theme.of(
                 context,
-              ).textTheme.bodyMedium?.copyWith(color: DocxanColors.inkMuted),
+              ).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
             ),
           ],
         ),

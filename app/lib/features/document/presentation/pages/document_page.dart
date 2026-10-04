@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/export/docx_builder.dart';
 import 'package:docxan/core/export/export_filenames.dart';
 import 'package:docxan/core/export/image_export.dart';
@@ -83,7 +83,7 @@ class _DocumentPageState extends ConsumerState<DocumentPage> {
                 .toggleFavorite(saved.id),
             icon: Icon(
               doc.isFavorite ? Icons.star_rounded : Icons.star_outline,
-              color: doc.isFavorite ? DocxanColors.accent : DocxanColors.ink,
+              color: doc.isFavorite ? context.palette.accent : context.palette.ink,
             ),
           ),
         ],
@@ -95,9 +95,9 @@ class _DocumentPageState extends ConsumerState<DocumentPage> {
             aspectRatio: 3 / 4,
             child: Container(
               decoration: BoxDecoration(
-                color: DocxanColors.paper,
+                color: context.palette.paper,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: DocxanColors.hairline),
+                border: Border.all(color: context.palette.hairline),
               ),
               clipBehavior: Clip.antiAlias,
               child: _PagesPreview(paths: saved.pagePaths.isNotEmpty ? saved.pagePaths : saved.imagePaths),
@@ -228,6 +228,7 @@ class _DocumentPageState extends ConsumerState<DocumentPage> {
     final paths = saved.imagePaths;
     if (paths.isEmpty) return;
     final files = <XFile>[];
+    final temps = <String>[];
     for (var i = 0; i < paths.length; i++) {
       final source = paths[i];
       if (!File(source).existsSync()) continue;
@@ -241,6 +242,7 @@ class _DocumentPageState extends ConsumerState<DocumentPage> {
           pageCount: paths.length,
         );
         final path = await store.writeCacheBytes(name, bytes);
+        temps.add(path);
         files.add(XFile(path, mimeType: 'image/png', name: name));
       } else {
         files.add(
@@ -257,26 +259,37 @@ class _DocumentPageState extends ConsumerState<DocumentPage> {
         );
       }
     }
-    if (files.isEmpty) return;
-    await SharePlus.instance.share(ShareParams(files: files));
+    try {
+      if (files.isEmpty) return;
+      await SharePlus.instance.share(ShareParams(files: files));
+    } finally {
+      for (final path in temps) {
+        await store.deleteTempFile(path);
+      }
+    }
   }
 
   Future<void> _shareDocx(SavedDocument saved) async {
+    final store = ref.read(localFileStoreProvider);
     final bytes = buildDocxFromText(saved.summary.ocrText);
     final name = exportFileName(saved.summary.name, 'docx');
-    final path = await ref.read(localFileStoreProvider).writeCacheBytes(name, bytes);
-    await SharePlus.instance.share(
-      ShareParams(
-        files: [
-          XFile(
-            path,
-            mimeType:
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            name: name,
-          ),
-        ],
-      ),
-    );
+    final path = await store.writeCacheBytes(name, bytes);
+    try {
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [
+            XFile(
+              path,
+              mimeType:
+                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+              name: name,
+            ),
+          ],
+        ),
+      );
+    } finally {
+      await store.deleteTempFile(path);
+    }
   }
 
   Future<void> _rename(SavedDocument saved) async {
@@ -395,8 +408,8 @@ class _PagesPreview extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
                     '${index + 1}/${existing.length}',
-                    style: const TextStyle(
-                      color: DocxanColors.inkMuted,
+                    style: TextStyle(
+                      color: context.palette.inkMuted,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

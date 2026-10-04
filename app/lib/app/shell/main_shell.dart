@@ -1,5 +1,7 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
+import 'package:docxan/core/ads/ad_config.dart';
+import 'package:docxan/core/ads/widgets/docxan_banner_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,58 +10,69 @@ class MainShell extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
+  static const _scanBranch = 2;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final palette = context.palette;
+    final showBanner =
+        AdConfig.adsEnabled && navigationShell.currentIndex != _scanBranch;
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: DocxanColors.paper,
-          border: Border(top: BorderSide(color: DocxanColors.hairline)),
-        ),
-        child: SafeArea(
-          child: SizedBox(
-            height: 72,
-            child: Row(
-              children: [
-                _NavItem(
-                  icon: Icons.home_outlined,
-                  selectedIcon: Icons.home_rounded,
-                  label: l10n.home,
-                  selected: navigationShell.currentIndex == 0,
-                  onTap: () => navigationShell.goBranch(0),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showBanner) const DocxanBannerAd(),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: palette.paper,
+              border: Border(top: BorderSide(color: palette.hairline)),
+            ),
+            child: SafeArea(
+              child: SizedBox(
+                height: 72,
+                child: Row(
+                  children: [
+                    _NavItem(
+                      icon: Icons.home_outlined,
+                      selectedIcon: Icons.home_rounded,
+                      label: l10n.home,
+                      selected: navigationShell.currentIndex == 0,
+                      onTap: () => navigationShell.goBranch(0),
+                    ),
+                    _NavItem(
+                      icon: Icons.folder_outlined,
+                      selectedIcon: Icons.folder_rounded,
+                      label: l10n.folders,
+                      selected: navigationShell.currentIndex == 1,
+                      onTap: () => navigationShell.goBranch(1),
+                    ),
+                    _ScanItem(
+                      label: l10n.scan,
+                      selected: navigationShell.currentIndex == _scanBranch,
+                      onTap: () => navigationShell.goBranch(_scanBranch),
+                    ),
+                    _NavItem(
+                      icon: Icons.search,
+                      selectedIcon: Icons.search_rounded,
+                      label: l10n.searchTab,
+                      selected: navigationShell.currentIndex == 3,
+                      onTap: () => navigationShell.goBranch(3),
+                    ),
+                    _NavItem(
+                      icon: Icons.settings_outlined,
+                      selectedIcon: Icons.settings_rounded,
+                      label: l10n.settings,
+                      selected: navigationShell.currentIndex == 4,
+                      onTap: () => navigationShell.goBranch(4),
+                    ),
+                  ],
                 ),
-                _NavItem(
-                  icon: Icons.folder_outlined,
-                  selectedIcon: Icons.folder_rounded,
-                  label: l10n.folders,
-                  selected: navigationShell.currentIndex == 1,
-                  onTap: () => navigationShell.goBranch(1),
-                ),
-                _ScanItem(
-                  label: l10n.scan,
-                  selected: navigationShell.currentIndex == 2,
-                  onTap: () => navigationShell.goBranch(2),
-                ),
-                _NavItem(
-                  icon: Icons.search,
-                  selectedIcon: Icons.search_rounded,
-                  label: l10n.searchTab,
-                  selected: navigationShell.currentIndex == 3,
-                  onTap: () => navigationShell.goBranch(3),
-                ),
-                _NavItem(
-                  icon: Icons.settings_outlined,
-                  selectedIcon: Icons.settings_rounded,
-                  label: l10n.settings,
-                  selected: navigationShell.currentIndex == 4,
-                  onTap: () => navigationShell.goBranch(4),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -82,7 +95,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? DocxanColors.accent : DocxanColors.inkMuted;
+    final palette = context.palette;
+    final color = selected ? palette.accent : palette.inkMuted;
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -119,6 +133,7 @@ class _ScanItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -130,11 +145,11 @@ class _ScanItem extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: DocxanColors.accent,
+                color: palette.accent,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: DocxanColors.accent.withValues(
+                    color: palette.accent.withValues(
                       alpha: selected ? 0.45 : 0.28,
                     ),
                     blurRadius: 10,
@@ -142,9 +157,9 @@ class _ScanItem extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.document_scanner_outlined,
-                color: DocxanColors.paper,
+                color: palette.onAccent,
               ),
             ),
             const SizedBox(height: 2),
@@ -153,7 +168,7 @@ class _ScanItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                color: selected ? DocxanColors.accent : DocxanColors.ink,
+                color: selected ? palette.accent : palette.ink,
               ),
             ),
           ],

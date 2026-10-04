@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:docxan/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -23,6 +24,20 @@ abstract interface class LocalFileStore {
   Future<int> libraryBytes();
   Future<int> cacheBytes();
   Future<void> clearCache();
+
+  /// Deletes [path] only if it lives in the app temp/cache dirs (our scan
+  /// cache, camera or image_picker copies). Never throws.
+  Future<void> deleteTempFile(String path);
+
+  /// Deletes plaintext leftovers: files in our scan cache modified before
+  /// [scanCutoff], and known plugin temps (camera `CAP*`, image_picker,
+  /// share_plus copies) modified before [pluginCutoff]. Paths in [keep] are
+  /// never touched. Never throws.
+  Future<void> sweepTemps({
+    required DateTime scanCutoff,
+    required DateTime pluginCutoff,
+    Set<String> keep = const {},
+  });
 }
 
 class MemoryLocalFileStore implements LocalFileStore {
@@ -99,6 +114,31 @@ class MemoryLocalFileStore implements LocalFileStore {
   @override
   Future<void> clearCache() async {
     files.removeWhere((key, _) => key.startsWith('cache/'));
+  }
+
+  @override
+  Future<void> deleteTempFile(String path) async {
+    final key = _cacheKey(path);
+    if (key != null) files.remove(key);
+  }
+
+  /// No timestamps in memory: removes every cache entry not in [keep].
+  @override
+  Future<void> sweepTemps({
+    required DateTime scanCutoff,
+    required DateTime pluginCutoff,
+    Set<String> keep = const {},
+  }) async {
+    final kept = keep.map(_cacheKey).whereType<String>().toSet();
+    files.removeWhere(
+      (key, _) => key.startsWith('cache/') && !kept.contains(key),
+    );
+  }
+
+  static String? _cacheKey(String path) {
+    const scheme = 'local://';
+    final key = path.startsWith(scheme) ? path.substring(scheme.length) : path;
+    return key.startsWith('cache/') ? key : null;
   }
 }
 
@@ -189,6 +229,113 @@ class PathLocalFileStore implements LocalFileStore {
       await dir.delete(recursive: true);
     }
     await dir.create(recursive: true);
+  }
+
+  static const _scanDirName = 'docxan_scan';
+  static const _pluginPrefixes = ['CAP', 'image_picker', 'scaled_'];
+
+  @override
+  Future<void> deleteTempFile(String path) async {
+    try {
+      final target = p.normalize(File(path).absolute.path);
+      final roots = await _tempRoots();
+      if (!roots.any((root) => p.isWithin(root, target))) return;
+      final file = File(target);
+      if (await file.exists()) await file.delete();
+    } catch (error) {
+      AppLogger.debug('Temp delete skipped: $error');
+    }
+  }
+
+  @override
+  Future<void> sweepTemps({
+    required DateTime scanCutoff,
+    required DateTime pluginCutoff,
+    Set<String> keep = const {},
+  }) async {
+    try {
+      final kept = keep.map((path) => p.normalize(path)).toSet();
+      for (final root in await _tempRoots()) {
+        await _sweepDir(
+          Directory(p.join(root, _scanDirName)),
+          cutoff: scanCutoff,
+          keep: kept,
+          recursive: true,
+        );
+        await _sweepDir(
+          Directory(p.join(root, 'share_plus')),
+          cutoff: pluginCutoff,
+          keep: kept,
+          recursive: true,
+        );
+        await _sweepDir(
+          Directory(root),
+          cutoff: pluginCutoff,
+          keep: kept,
+          prefixes: _pluginPrefixes,
+        );
+        await _sweepDir(
+          Directory(p.join(root, 'pictures')),
+          cutoff: pluginCutoff,
+          keep: kept,
+          prefixes: _pluginPrefixes,
+        );
+      }
+    } catch (error) {
+      AppLogger.debug('Temp sweep skipped: $error');
+    }
+  }
+
+  /// App-private temp roots. Shallow paths (e.g. `/tmp` on a dev machine)
+  /// are ignored so we never sweep a shared system directory.
+  Future<List<String>> _tempRoots() async {
+    final roots = <String>{};
+    try {
+      roots.add(p.normalize((await getTemporaryDirectory()).path));
+    } catch (_) {}
+    try {
+      roots.add(p.normalize(Directory.systemTemp.path));
+    } catch (_) {}
+    return roots
+        .where((root) => p.split(root).where((s) => s != p.separator).length >= 3)
+        .toList();
+  }
+
+  Future<void> _sweepDir(
+    Directory dir, {
+    required DateTime cutoff,
+    required Set<String> keep,
+    bool recursive = false,
+    List<String>? prefixes,
+  }) async {
+    try {
+      if (!await dir.exists()) return;
+      final stale = <File>[];
+      await for (final entity in dir.list(
+        recursive: recursive,
+        followLinks: false,
+      )) {
+        if (entity is! File) continue;
+        final path = p.normalize(entity.path);
+        if (keep.contains(path)) continue;
+        if (prefixes != null) {
+          final name = p.basename(path);
+          if (!prefixes.any((prefix) => name.startsWith(prefix))) continue;
+        }
+        try {
+          if ((await entity.lastModified()).isBefore(cutoff)) {
+            stale.add(entity);
+          }
+        } catch (_) {}
+      }
+      for (final file in stale) {
+        try {
+          await file.delete();
+        } catch (_) {}
+      }
+    } catch (error) {
+      AppLogger.debug('Temp sweep of ${dir.path} skipped: $error');
+    }
   }
 }
 

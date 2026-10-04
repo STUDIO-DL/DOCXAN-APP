@@ -1,6 +1,6 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/app/theme/spacing.dart';
 import 'package:docxan/core/session/session_controller.dart';
 import 'package:docxan/core/widgets/docxan_logo.dart';
@@ -16,7 +16,7 @@ class OnboardingPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: DocxanColors.paper,
+      backgroundColor: context.palette.paper,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -42,7 +42,7 @@ class OnboardingPage extends ConsumerWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: DocxanColors.ink,
+                color: context.palette.ink,
               ),
             ),
             const SizedBox(height: 28),

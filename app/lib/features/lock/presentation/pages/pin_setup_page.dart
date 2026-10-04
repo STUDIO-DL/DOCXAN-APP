@@ -1,10 +1,10 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
 import 'package:docxan/core/constants/app_constants.dart';
 import 'package:docxan/core/security/pin_service.dart';
 import 'package:docxan/core/session/session_controller.dart';
 import 'package:docxan/core/widgets/doxan_pin_pad.dart';
+import 'package:docxan/core/widgets/pin_lockout_countdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,19 +20,33 @@ class PinSetupPage extends ConsumerStatefulWidget {
   ConsumerState<PinSetupPage> createState() => _PinSetupPageState();
 }
 
-class _PinSetupPageState extends ConsumerState<PinSetupPage> {
+class _PinSetupPageState extends ConsumerState<PinSetupPage>
+    with PinLockoutCountdown<PinSetupPage> {
   late _PinPhase _phase;
   String _buffer = '';
   String _first = '';
   String? _error;
+  bool _checking = false;
+
+  bool get _currentLocked => _phase == _PinPhase.current && lockedOut;
 
   @override
   void initState() {
     super.initState();
     _phase = widget.changing ? _PinPhase.current : _PinPhase.create;
+    if (widget.changing) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _restoreLockout());
+    }
+  }
+
+  Future<void> _restoreLockout() async {
+    final remaining = await ref.read(pinServiceProvider).remainingLockout();
+    if (!mounted || remaining <= Duration.zero) return;
+    startLockout(remaining);
   }
 
   Future<void> _append(String digit) async {
+    if (_checking || _currentLocked) return;
     if (_buffer.length >= AppConstants.pinLength) return;
     setState(() {
       _buffer += digit;
@@ -42,13 +56,22 @@ class _PinSetupPageState extends ConsumerState<PinSetupPage> {
 
     switch (_phase) {
       case _PinPhase.current:
-        final ok = await ref.read(pinServiceProvider).verify(_buffer);
+        _checking = true;
+        final PinCheck result;
+        try {
+          result = await ref.read(pinServiceProvider).check(_buffer);
+        } finally {
+          _checking = false;
+        }
         if (!mounted) return;
-        if (!ok) {
+        if (!result.ok) {
           setState(() {
             _buffer = '';
-            _error = AppLocalizations.of(context).pinWrong;
+            _error = result.lockedOut
+                ? null
+                : AppLocalizations.of(context).pinWrong;
           });
+          if (result.lockedOut) startLockout(result.lockout);
           return;
         }
         setState(() {
@@ -105,7 +128,7 @@ class _PinSetupPageState extends ConsumerState<PinSetupPage> {
     };
 
     return Scaffold(
-      backgroundColor: DocxanColors.paper,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: widget.changing
           ? AppBar(
               leading: IconButton(
@@ -118,7 +141,11 @@ class _PinSetupPageState extends ConsumerState<PinSetupPage> {
         child: Column(
           children: [
             const Spacer(),
-            const Icon(Icons.pin_outlined, size: 36, color: DocxanColors.ink),
+            Icon(
+              Icons.pin_outlined,
+              size: 36,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             const SizedBox(height: 16),
             Text(title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
@@ -132,12 +159,22 @@ class _PinSetupPageState extends ConsumerState<PinSetupPage> {
             ),
             const SizedBox(height: 28),
             DoxanPinDots(length: _buffer.length),
-            if (_error != null) ...[
+            if (_currentLocked || _error != null) ...[
               const SizedBox(height: 16),
-              Text(_error!, style: const TextStyle(color: DocxanColors.danger)),
+              Text(
+                _currentLocked
+                    ? l10n.pinTooManyAttempts(lockoutSeconds)
+                    : _error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ],
             const Spacer(),
-            DoxanPinPad(onDigit: _append, onBackspace: _backspace),
+            DoxanPinPad(
+              onDigit: _append,
+              onBackspace: _backspace,
+              enabled: !_currentLocked,
+            ),
             const SizedBox(height: 24),
           ],
         ),

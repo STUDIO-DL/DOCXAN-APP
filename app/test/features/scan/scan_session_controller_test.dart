@@ -1,11 +1,16 @@
 import 'package:docxan/core/imaging/crop_quad.dart';
+import 'package:docxan/core/storage/local_file_store.dart';
 import 'package:docxan/features/scan/presentation/controllers/scan_session_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   test('ScanSessionController cuenta y rota páginas', () {
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [
+        localFileStoreProvider.overrideWithValue(MemoryLocalFileStore()),
+      ],
+    );
     addTearDown(container.dispose);
     final controller = container.read(scanSessionProvider.notifier);
 
@@ -48,5 +53,37 @@ void main() {
 
     controller.clear();
     expect(container.read(scanSessionProvider).pageCount, 0);
+  });
+
+  test('borra las capturas en claro al quitar, repetir o cerrar la sesión', () async {
+    final files = MemoryLocalFileStore();
+    final container = ProviderContainer(
+      overrides: [localFileStoreProvider.overrideWithValue(files)],
+    );
+    addTearDown(container.dispose);
+    final controller = container.read(scanSessionProvider.notifier);
+
+    Future<String> capture(String name) =>
+        files.writeCacheBytes(name, const [1, 2, 3]);
+
+    final a = await capture('capture_a.jpg');
+    final b = await capture('capture_b.jpg');
+    final c = await capture('capture_c.jpg');
+    controller.addPage(a);
+    controller.addPage(b);
+
+    controller.removePageAt(0);
+    await Future<void>.delayed(Duration.zero);
+    expect(files.files.containsKey('cache/capture_a.jpg'), isFalse);
+
+    controller.beginRetake();
+    controller.addPage(c);
+    await Future<void>.delayed(Duration.zero);
+    expect(files.files.containsKey('cache/capture_b.jpg'), isFalse);
+    expect(files.files.containsKey('cache/capture_c.jpg'), isTrue);
+
+    controller.clear();
+    await Future<void>.delayed(Duration.zero);
+    expect(files.files.keys.where((key) => key.startsWith('cache/')), isEmpty);
   });
 }

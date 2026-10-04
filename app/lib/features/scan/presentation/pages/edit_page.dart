@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/data/user_settings_repository.dart';
 import 'package:docxan/core/extensions/date_time_x.dart';
 import 'package:docxan/core/imaging/compression_profile.dart';
@@ -102,9 +102,10 @@ class _EditPageState extends ConsumerState<EditPage> {
     final session = ref.watch(scanSessionProvider);
     final page = session.currentPage;
     final controller = ref.read(scanSessionProvider.notifier);
+    final palette = context.palette;
 
     return Scaffold(
-      backgroundColor: DocxanColors.paper,
+      backgroundColor: palette.paper,
       body: Stack(
         children: [
           SafeArea(
@@ -252,7 +253,7 @@ class _EditPageState extends ConsumerState<EditPage> {
                       ),
                       const SizedBox(height: 8),
                       Material(
-                        color: DocxanColors.accentSoft,
+                        color: palette.accentSoft,
                         borderRadius: BorderRadius.circular(18),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(18),
@@ -264,9 +265,9 @@ class _EditPageState extends ConsumerState<EditPage> {
                             ),
                             child: Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.add,
-                                  color: DocxanColors.accent,
+                                  color: palette.accent,
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
@@ -291,9 +292,9 @@ class _EditPageState extends ConsumerState<EditPage> {
                                     ],
                                   ),
                                 ),
-                                const Icon(
+                                Icon(
                                   Icons.chevron_right,
-                                  color: DocxanColors.inkMuted,
+                                  color: palette.inkMuted,
                                 ),
                               ],
                             ),
@@ -322,8 +323,8 @@ class _EditPageState extends ConsumerState<EditPage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const CircularProgressIndicator(
-                        color: DocxanColors.accent,
+                      CircularProgressIndicator(
+                        color: palette.accent,
                       ),
                       const SizedBox(width: 16),
                       Text(_savePhase),
@@ -379,8 +380,8 @@ class _PageStrip extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: selected
-                          ? DocxanColors.accent
-                          : DocxanColors.hairline,
+                          ? context.palette.accent
+                          : context.palette.hairline,
                       width: selected ? 2 : 1,
                     ),
                   ),
@@ -410,7 +411,7 @@ class _PagePreview extends ConsumerWidget {
     final file = File(page.path);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: DocxanColors.canvas,
+        color: context.palette.canvas,
         borderRadius: BorderRadius.circular(4),
       ),
       child: FittedBox(
@@ -568,6 +569,7 @@ class _ToolButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -580,12 +582,12 @@ class _ToolButton extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: selected ? DocxanColors.accentSoft : Colors.transparent,
+                  color: selected ? palette.accentSoft : Colors.transparent,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   icon,
-                  color: selected ? DocxanColors.accent : DocxanColors.ink,
+                  color: selected ? palette.accent : palette.ink,
                 ),
               ),
               const SizedBox(height: 4),
@@ -595,7 +597,7 @@ class _ToolButton extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: selected ? DocxanColors.ink : DocxanColors.inkMuted,
+                  color: selected ? palette.ink : palette.inkMuted,
                 ),
               ),
             ],
@@ -668,7 +670,7 @@ class _FilterThumb extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: selected ? DocxanColors.accent : DocxanColors.hairline,
+                color: selected ? context.palette.accent : context.palette.hairline,
                 width: selected ? 2 : 1,
               ),
             ),
@@ -690,7 +692,7 @@ class _FilterThumb extends StatelessWidget {
             style: TextStyle(
               fontSize: 11,
               fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-              color: DocxanColors.ink,
+              color: context.palette.ink,
             ),
           ),
         ],
@@ -718,7 +720,7 @@ class _LabeledSlider extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: DocxanColors.ink),
+          Icon(icon, size: 20, color: context.palette.ink),
           const SizedBox(width: 8),
           SizedBox(
             width: 78,

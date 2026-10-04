@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:docxan/app/flavor.dart';
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/data/user_settings_repository.dart';
 import 'package:docxan/core/imaging/compression_profile.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
@@ -62,7 +62,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         : formatBytes(_stats!.totalBytes!);
 
     return Scaffold(
-      backgroundColor: DocxanColors.paper,
+      backgroundColor: context.palette.paper,
       body: SafeArea(
         child: ListView(
           children: [
@@ -175,7 +175,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             ListTile(
               title: Text(
                 l10n.signOut,
-                style: const TextStyle(color: DocxanColors.danger),
+                style: TextStyle(color: context.palette.danger),
               ),
               onTap: () async {
                 await ref.read(authRepositoryProvider).signOut();

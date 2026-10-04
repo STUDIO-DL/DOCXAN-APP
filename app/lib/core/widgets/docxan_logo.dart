@@ -1,4 +1,4 @@
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class DocxanLogo extends StatelessWidget {
@@ -12,7 +12,8 @@ class DocxanLogo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ClipRect(
+        ClipRRect(
+          borderRadius: BorderRadius.circular(size * 0.12),
           child: Align(
             alignment: Alignment.topCenter,
             heightFactor: 0.68,
@@ -31,7 +32,7 @@ class DocxanLogo extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w700,
               letterSpacing: -0.8,
-              color: DocxanColors.ink,
+              color: context.palette.ink,
             ),
           ),
         ],

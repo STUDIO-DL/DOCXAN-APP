@@ -149,6 +149,7 @@
   "pinConfirmSubtitle": "Saisissez à nouveau le même code PIN pour le confirmer.",
   "pinMismatch": "Les codes PIN ne correspondent pas. Réessayez.",
   "pinWrong": "Code PIN incorrect",
+  "pinTooManyAttempts": "Trop de tentatives. Réessayez dans {seconds} s",
   "pinCurrentTitle": "Code PIN actuel",
   "changePin": "Changer le code PIN",
   "pinChanged": "Code PIN mis à jour",

@@ -1,5 +1,6 @@
 import 'package:docxan/app/router/routes.dart';
 import 'package:docxan/app/shell/main_shell.dart';
+import 'package:docxan/core/debug/agent_log.dart';
 import 'package:docxan/core/session/session_controller.dart';
 import 'package:docxan/features/auth/auth.dart';
 import 'package:docxan/features/backup/backup.dart';
@@ -33,6 +34,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final onLock = loc == AppRoutes.lock;
       final onPinSetup = loc == AppRoutes.pinSetup;
       final onLegal = loc.startsWith('/settings/legal');
+      // #region agent log
+      if (onPinSetup || onLock) agentLog('E', 'app_router.dart:redirect', 'lock routes', {'loc': loc, 'pinSet': session.pinSet, 'unlocked': session.unlocked, 'change': state.uri.queryParameters['change']});
+      // #endregion
 
       if (!session.splashDone) {
         return onSplash ? null : AppRoutes.splash;
@@ -55,13 +59,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           !onOnboarding) {
         return AppRoutes.pinSetup;
       }
-      if (session.pinSet && !session.unlocked && !onLock && !onPinSetup) {
+      if (session.pinSet && !session.unlocked && !onLock) {
         return AppRoutes.lock;
       }
       if (onLock && (!session.pinSet || session.unlocked)) {
         return AppRoutes.home;
       }
-      if (onPinSetup && session.pinSet && session.unlocked) {
+      if (onPinSetup &&
+          session.pinSet &&
+          state.uri.queryParameters['change'] != '1') {
         return AppRoutes.home;
       }
       return null;
@@ -146,7 +152,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'capture',
-                    builder: (context, state) => const CapturePage(),
+                    redirect: (context, state) => AppRoutes.scan,
                   ),
                   GoRoute(
                     path: 'edit',

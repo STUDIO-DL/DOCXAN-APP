@@ -994,6 +994,12 @@ abstract class AppLocalizations {
   /// **'PIN incorrecto'**
   String get pinWrong;
 
+  /// No description provided for @pinTooManyAttempts.
+  ///
+  /// In es, this message translates to:
+  /// **'Demasiados intentos. Inténtalo de nuevo en {seconds} s'**
+  String pinTooManyAttempts(int seconds);
+
   /// No description provided for @pinCurrentTitle.
   ///
   /// In es, this message translates to:

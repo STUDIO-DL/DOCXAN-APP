@@ -1,5 +1,5 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/locale/app_locale_controller.dart';
 import 'package:docxan/core/locale/app_locales.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ Future<void> showLanguagePickerSheet(BuildContext context) {
   final l10n = AppLocalizations.of(context);
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: DocxanColors.paper,
+    backgroundColor: context.palette.surface,
     showDragHandle: true,
     builder: (context) {
       return SafeArea(
@@ -46,7 +46,7 @@ class LanguageChoiceList extends ConsumerWidget {
           ListTile(
             title: Text(AppLocales.displayName(l10n, code)),
             trailing: selected == code
-                ? const Icon(Icons.check, color: DocxanColors.accent)
+                ? Icon(Icons.check, color: context.palette.accent)
                 : null,
             onTap: () {
               ref.read(appLocaleProvider.notifier).setLocale(code);

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/library_collections.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
@@ -90,7 +90,7 @@ class FolderDetailPage extends ConsumerWidget {
                 onTap: () => Navigator.pop(context, 'restore'),
               ),
               ListTile(
-                leading: const Icon(Icons.delete_forever, color: DocxanColors.danger),
+                leading: Icon(Icons.delete_forever, color: context.palette.danger),
                 title: Text(l10n.deleteForever),
                 onTap: () => Navigator.pop(context, 'purge'),
               ),
@@ -101,7 +101,7 @@ class FolderDetailPage extends ConsumerWidget {
                 onTap: () => Navigator.pop(context, 'move'),
               ),
               ListTile(
-                leading: const Icon(Icons.delete_outline, color: DocxanColors.danger),
+                leading: Icon(Icons.delete_outline, color: context.palette.danger),
                 title: Text(l10n.delete),
                 onTap: () => Navigator.pop(context, 'trash'),
               ),
@@ -171,9 +171,9 @@ class _Thumb extends StatelessWidget {
       width: 44,
       height: 44,
       decoration: BoxDecoration(
-        color: DocxanColors.paper,
+        color: context.palette.paper,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: DocxanColors.hairline),
+        border: Border.all(color: context.palette.hairline),
       ),
       clipBehavior: Clip.antiAlias,
       child: has

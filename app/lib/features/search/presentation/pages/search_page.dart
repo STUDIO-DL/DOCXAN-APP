@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/constants/app_constants.dart';
 import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
@@ -29,6 +29,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   String _query = '';
   _SearchFilter _filter = _SearchFilter.all;
   List<SavedDocument> _results = const [];
+  int _searchGeneration = 0;
   List<String> _recent = const [];
 
   @override
@@ -63,6 +64,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   Future<void> _runSearch() async {
+    final generation = ++_searchGeneration;
     final q = _query.trim();
     if (q.isEmpty && _filter == _SearchFilter.all) {
       setState(() => _results = const []);
@@ -74,7 +76,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       ocrOnly: _filter == _SearchFilter.ocr,
       pdfOnly: _filter == _SearchFilter.pdf,
     );
-    if (!mounted) return;
+    if (!mounted || generation != _searchGeneration) return;
     setState(() => _results = results);
   }
 
@@ -86,7 +88,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     });
 
     return Scaffold(
-      backgroundColor: DocxanColors.paper,
+      backgroundColor: context.palette.paper,
       body: SafeArea(
         child: Column(
           children: [
@@ -217,7 +219,7 @@ class _Thumb extends StatelessWidget {
       height: 44,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: DocxanColors.hairline),
+        border: Border.all(color: context.palette.hairline),
       ),
       clipBehavior: Clip.antiAlias,
       child: has

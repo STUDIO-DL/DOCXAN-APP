@@ -1,10 +1,19 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:docxan/core/errors/app_failure.dart';
 import 'package:docxan/core/network/docxan_supabase.dart';
 import 'package:docxan/core/network/supabase_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+
+/// The Edge Function answered 429; stop the current run instead of retrying.
+class BackupRateLimitFailure extends StorageFailure {
+  const BackupRateLimitFailure(this.retryAfterSeconds)
+    : super('Demasiadas solicitudes de backup. Reintenta más tarde.');
+
+  final int retryAfterSeconds;
+}
 
 /// Cliente R2 vía URLs prefirmadas. El token S3 nunca viaja en la app.
 class R2StorageService {
@@ -13,10 +22,25 @@ class R2StorageService {
     http.Client? httpClient,
   }) : _http = httpClient ?? http.Client();
 
+  /// Must match `MAX_UPLOAD_BYTES` in the `backup-signed-url` Edge Function.
+  static const maxUploadBytes = 50 * 1024 * 1024;
+
   final BackupSignedUrlClient signedUrls;
   final http.Client _http;
+  final Map<String, Uint8List> _pepperByUser = {};
 
   bool get isConfigured => DocxanSupabase.isReady;
+
+  /// Server-held backup pepper for [userId], cached in memory only.
+  Future<Uint8List> backupPepper({required String userId}) async {
+    final cached = _pepperByUser[userId];
+    if (cached != null) return cached;
+    final key = Uint8List.fromList(await signedUrls.fetchBackupKey());
+    _pepperByUser
+      ..clear()
+      ..[userId] = key;
+    return key;
+  }
 
   Future<void> uploadDocument({
     required String userId,
@@ -24,11 +48,16 @@ class R2StorageService {
     required List<int> bytes,
     String backupId = 'current',
   }) async {
+    if (bytes.isEmpty || bytes.length > maxUploadBytes) {
+      throw const StorageFailure('El backup supera el tamaño máximo.');
+    }
     final url = await signedUrls.createUploadUrl(
       userId: userId,
       documentId: documentId,
       backupId: backupId,
+      size: bytes.length,
     );
+    // http sets Content-Length from bytes.length, matching the signed size.
     final response = await _http.put(
       url,
       headers: {'Content-Type': 'application/octet-stream'},
@@ -98,30 +127,67 @@ class EdgeBackupSignedUrlClient implements BackupSignedUrlClient {
     required String userId,
     required String documentId,
     required String backupId,
+    required int size,
   }) {
-    return _request(
+    return _requestUrl(
       action: 'upload',
       documentId: documentId,
       backupId: backupId,
+      size: size,
     );
   }
 
   @override
   Future<Uri> createDownloadUrl({required String r2Key}) {
-    return _request(action: 'download', r2Key: r2Key);
+    return _requestUrl(action: 'download', r2Key: r2Key);
   }
 
   @override
   Future<Uri> createDeleteUrl({required String r2Key}) {
-    return _request(action: 'delete', r2Key: r2Key);
+    return _requestUrl(action: 'delete', r2Key: r2Key);
   }
 
-  Future<Uri> _request({
+  @override
+  Future<List<int>> fetchBackupKey() async {
+    final body = await _post({'action': 'backup_key'});
+    final raw = body['key'];
+    if (raw is! String) {
+      throw const StorageFailure('La Edge Function no devolvió la clave.');
+    }
+    List<int>? key;
+    try {
+      key = base64Decode(raw);
+    } on FormatException {
+      key = null;
+    }
+    if (key == null || key.length != 32) {
+      throw const StorageFailure('La Edge Function no devolvió la clave.');
+    }
+    return key;
+  }
+
+  Future<Uri> _requestUrl({
     required String action,
     String? documentId,
     String? backupId,
     String? r2Key,
+    int? size,
   }) async {
+    final body = await _post({
+      'action': action,
+      'documentId': ?documentId,
+      'backupId': ?backupId,
+      'r2Key': ?r2Key,
+      'size': ?size,
+    });
+    final url = body['url'];
+    if (url is! String) {
+      throw const StorageFailure('La Edge Function no devolvió una URL.');
+    }
+    return Uri.parse(url);
+  }
+
+  Future<Map<String, dynamic>> _post(Map<String, Object?> payload) async {
     if (!DocxanSupabase.isReady) {
       throw const StorageFailure(
         'Supabase no está configurado. Añade SUPABASE_URL y SUPABASE_ANON_KEY.',
@@ -142,23 +208,23 @@ class EdgeBackupSignedUrlClient implements BackupSignedUrlClient {
         'apikey': DocxanSupabase.client.rest.headers['apikey'] ?? '',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        'action': action,
-        'documentId': ?documentId,
-        'backupId': ?backupId,
-        'r2Key': ?r2Key,
-      }),
+      body: jsonEncode(payload),
     );
+    if (response.statusCode == 429) {
+      throw BackupRateLimitFailure(
+        int.tryParse(response.headers['retry-after'] ?? '') ?? 60,
+      );
+    }
     if (response.statusCode >= 300) {
       throw StorageFailure(
         'La Edge Function de R2 no está lista (${response.statusCode}).',
       );
     }
     final body = jsonDecode(response.body);
-    if (body is! Map || body['url'] is! String) {
-      throw const StorageFailure('La Edge Function no devolvió una URL.');
+    if (body is! Map<String, dynamic>) {
+      throw const StorageFailure('La Edge Function no devolvió JSON válido.');
     }
-    return Uri.parse(body['url'] as String);
+    return body;
   }
 }
 

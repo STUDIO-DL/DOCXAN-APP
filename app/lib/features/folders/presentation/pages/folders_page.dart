@@ -1,6 +1,6 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/router/routes.dart';
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/library/folder_labels.dart';
 import 'package:docxan/core/library/library_collections.dart';
 import 'package:docxan/core/library/local_library_catalog.dart';
@@ -109,7 +109,7 @@ class _FoldersPageState extends ConsumerState<FoldersPage> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: DocxanColors.paper,
+      backgroundColor: context.palette.paper,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.only(bottom: 24),
@@ -178,8 +178,8 @@ class _FoldersPageState extends ConsumerState<FoldersPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _createFolder,
-        backgroundColor: DocxanColors.ink,
-        foregroundColor: DocxanColors.paper,
+        backgroundColor: context.palette.ink,
+        foregroundColor: context.palette.paper,
         icon: const Icon(Icons.create_new_folder_outlined),
         label: Text(l10n.newFolder),
       ),
@@ -200,7 +200,7 @@ class _FoldersPageState extends ConsumerState<FoldersPage> {
               onTap: () => Navigator.pop(context, 'rename'),
             ),
             ListTile(
-              leading: const Icon(Icons.delete_outline, color: DocxanColors.danger),
+              leading: Icon(Icons.delete_outline, color: context.palette.danger),
               title: Text(l10n.delete),
               onTap: () => Navigator.pop(context, 'delete'),
             ),
@@ -273,17 +273,18 @@ class _FolderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Material(
-        color: highlight ? DocxanColors.accentSoft : DocxanColors.paper,
+        color: highlight ? palette.accentSoft : palette.paper,
         borderRadius: BorderRadius.circular(16),
         child: ListTile(
           onTap: onTap,
-          leading: Icon(icon, color: DocxanColors.ink),
+          leading: Icon(icon, color: palette.ink),
           title: Text(title),
           subtitle: Text(subtitle),
-          trailing: const Icon(Icons.chevron_right, color: DocxanColors.inkMuted),
+          trailing: Icon(Icons.chevron_right, color: palette.inkMuted),
         ),
       ),
     );
@@ -320,7 +321,7 @@ class _QuickAccessTile extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            Icon(icon, color: DocxanColors.ink),
+            Icon(icon, color: context.palette.ink),
             const SizedBox(height: 8),
             Text(
               localizedSavedFolderName(
@@ -336,7 +337,7 @@ class _QuickAccessTile extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: DocxanColors.inkMuted,
+                color: context.palette.inkMuted,
                 fontSize: 11,
               ),
             ),

@@ -149,6 +149,7 @@
   "pinConfirmSubtitle": "Enter the same PIN again to confirm it.",
   "pinMismatch": "PINs do not match. Try again.",
   "pinWrong": "Incorrect PIN",
+  "pinTooManyAttempts": "Too many attempts. Try again in {seconds}s",
   "pinCurrentTitle": "Current PIN",
   "changePin": "Change PIN",
   "pinChanged": "PIN updated",

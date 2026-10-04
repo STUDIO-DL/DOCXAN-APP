@@ -1,4 +1,5 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
+import 'package:docxan/core/debug/agent_log.dart';
 import 'package:docxan/core/errors/app_failure.dart';
 import 'package:docxan/core/export/backup_archive.dart';
 import 'package:docxan/core/library/library_ids.dart';
@@ -43,7 +44,7 @@ String localizedSyncReport(AppLocalizations l10n, SyncReport report) {
     'not_configured' => l10n.syncNotConfigured,
     'nothing_pending' => l10n.syncNothingPending,
     'complete' => l10n.syncComplete,
-    'need_pin' => l10n.pin,
+    'need_pin' => l10n.lockSubtitle,
     'failed' => l10n.syncFailedMessage,
     'restore_complete' => l10n.restoreComplete,
     'restore_failed' => l10n.restoreFailed,
@@ -62,6 +63,9 @@ Future<void> notifySyncResult(AppLocalizations l10n, SyncReport report) async {
 
 class SyncManager {
   SyncManager(this._ref);
+
+  /// Sanity cap on blobs processed per restore run.
+  static const maxRestoreCount = 2000;
 
   final Ref _ref;
 
@@ -105,6 +109,7 @@ class SyncManager {
     var failed = 0;
     String? lastError;
     final userId = session.userId!;
+    final keys = BackupKeyCache();
 
     for (final job in jobs) {
       await queue.mark(job.id, SyncStatus.uploading);
@@ -112,7 +117,13 @@ class SyncManager {
         await catalog.setDocumentSyncStatus(job.entityId, SyncStatus.uploading);
       }
       try {
-        await _runJob(job, userId: userId, storage: storage, remote: remote);
+        await _runJob(
+          job,
+          userId: userId,
+          storage: storage,
+          remote: remote,
+          keys: keys,
+        );
         await queue.mark(job.id, SyncStatus.synced);
         if (job.type != SyncJobType.deleteRemote) {
           await catalog.setDocumentSyncStatus(job.entityId, SyncStatus.synced);
@@ -126,8 +137,10 @@ class SyncManager {
           await catalog.setDocumentSyncStatus(job.entityId, SyncStatus.failed);
         }
         failed += 1;
+        if (error is BackupRateLimitFailure) break;
       }
     }
+    keys.clear();
 
     if (failed > 0 && uploaded == 0) {
       return SyncReport(
@@ -176,20 +189,33 @@ class SyncManager {
     var restored = 0;
     var failed = 0;
     String? lastError;
-    for (final backup in backups) {
+    final keys = BackupKeyCache();
+    for (final backup in backups.take(maxRestoreCount)) {
       try {
         final cipher = await storage.downloadDocument(
           userId: userId,
           documentId: backup.documentId,
           r2Key: backup.r2Key,
         );
-        final zip = await BackupCrypto.decrypt(blob: cipher, pin: pin);
+        final zip = await BackupCrypto.decrypt(
+          blob: cipher,
+          pin: pin,
+          pepper: BackupCrypto.versionOf(cipher) == 2
+              ? await storage.backupPepper(userId: userId)
+              : null,
+          userId: userId,
+          documentId: backup.documentId,
+          cache: keys,
+        );
         final packed = BackupArchive.filesOf(zip);
         final pdfBytes = packed['document.pdf'] ?? const <int>[];
         final pageEntries = packed.entries
             .where((entry) => entry.key.startsWith('pages/'))
             .toList()
-          ..sort((a, b) => a.key.compareTo(b.key));
+          ..sort((a, b) => _pageIndex(a.key).compareTo(_pageIndex(b.key)));
+        // #region agent log
+        agentLog('F', 'sync_manager.dart:restore', 'restored page order', {'keys': pageEntries.map((e) => e.key).toList()});
+        // #endregion
         final pdfPath = await files.writeBytes(
           '${backup.documentId}/document.pdf',
           pdfBytes,
@@ -228,8 +254,10 @@ class SyncManager {
         AppLogger.debug('Restore ${backup.documentId} failed: $error');
         lastError = error.toString();
         failed += 1;
+        if (error is BackupRateLimitFailure) break;
       }
     }
+    keys.clear();
 
     try {
       await catalog.mergeRemote(
@@ -261,6 +289,7 @@ class SyncManager {
     required String userId,
     required R2StorageService storage,
     required RemoteMetadataClient remote,
+    required BackupKeyCache keys,
   }) async {
     final library = _ref.read(libraryCatalogProvider);
     switch (job.type) {
@@ -282,11 +311,19 @@ class SyncManager {
           throw const CryptoFailure('need_pin');
         }
         await remote.upsertDocument(userId: userId, document: document);
+        final remoteId = LibraryIds.remoteUuid(document.id);
         final zip = BackupArchive.pack(document);
-        final cipher = await BackupCrypto.encrypt(plaintext: zip, pin: pin);
+        final cipher = await BackupCrypto.encrypt(
+          plaintext: zip,
+          pin: pin,
+          pepper: await storage.backupPepper(userId: userId),
+          userId: userId,
+          documentId: remoteId,
+          cache: keys,
+        );
         await storage.uploadDocument(
           userId: userId,
-          documentId: LibraryIds.remoteUuid(document.id),
+          documentId: remoteId,
           bytes: cipher,
         );
         await remote.upsertBackup(
@@ -318,6 +355,11 @@ class SyncManager {
         }
     }
   }
+}
+
+int _pageIndex(String key) {
+  final name = key.substring(key.lastIndexOf('/') + 1).split('.').first;
+  return int.tryParse(name) ?? 1 << 30;
 }
 
 final syncManagerProvider = Provider<SyncManager>((ref) {

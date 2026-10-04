@@ -1,4 +1,4 @@
-import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +9,7 @@ class DoxanPinDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(AppConstants.pinLength, (index) {
@@ -19,7 +20,7 @@ class DoxanPinDots extends StatelessWidget {
           height: 14,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: filled ? DocxanColors.ink : DocxanColors.hairline,
+            color: filled ? palette.ink : palette.hairline,
           ),
         );
       }),
@@ -32,10 +33,12 @@ class DoxanPinPad extends StatelessWidget {
     super.key,
     required this.onDigit,
     required this.onBackspace,
+    this.enabled = true,
   });
 
   final ValueChanged<String> onDigit;
   final VoidCallback onBackspace;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +55,9 @@ class DoxanPinPad extends StatelessWidget {
               const SizedBox.shrink()
             else
               TextButton(
-                onPressed: () => key == '⌫' ? onBackspace() : onDigit(key),
+                onPressed: !enabled
+                    ? null
+                    : () => key == '⌫' ? onBackspace() : onDigit(key),
                 child: Text(
                   key,
                   style: Theme.of(context).textTheme.headlineMedium,

@@ -1,5 +1,6 @@
 import 'package:docxan/app/l10n/app_localizations.dart';
 import 'package:docxan/app/theme/colors.dart';
+import 'package:docxan/app/theme/palette.dart';
 import 'package:docxan/core/models/library_models.dart';
 import 'package:docxan/core/utils/formatters.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class DocxanDocumentTile extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.more_vert, color: DocxanColors.inkMuted, size: 20),
+            Icon(Icons.more_vert, color: context.palette.inkMuted, size: 20),
           ],
         ),
       ),
@@ -128,7 +129,7 @@ class DocxanFolderCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: DocxanColors.canvas,
+          color: context.palette.canvas,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -177,11 +178,11 @@ class DocxanAppHeader extends StatelessWidget {
         ),
         CircleAvatar(
           radius: 18,
-          backgroundColor: DocxanColors.chip,
-          child: const Icon(
+          backgroundColor: context.palette.chip,
+          child: Icon(
             Icons.person_outline,
             size: 20,
-            color: DocxanColors.ink,
+            color: context.palette.ink,
           ),
         ),
       ],
@@ -212,8 +213,8 @@ class DocxanSectionHeader extends StatelessWidget {
           onPressed: onAction,
           child: Text(
             action,
-            style: const TextStyle(
-              color: DocxanColors.inkMuted,
+            style: TextStyle(
+              color: context.palette.inkMuted,
               fontWeight: FontWeight.w600,
             ),
           ),
